@@ -13,7 +13,7 @@ timezone:
 
 # URL
 ## If your site is put in a subdirectory, set url as 'http://yoursite.com/child' and root as '/child/'
-url: http://www.wonderm.cc
+url: https://www.wonderm.cc
 root: /
 permalink: :year/:month/:day/:title/
 permalink_defaults:
@@ -83,5 +83,6 @@ deploy:
   #repo: git@git.coding.net:WondermSwift/BlogPages.git
   #repo: git@git.coding.net:WondermSwift/WondermBlog.git
   #repo: git@git.dev.tencent.com:WondermSwift/WondermBlog.git
-  repo: git@github.com:WondermSwift/.github.io.git
+  repo: git@github.com:WondermSwift/WondermSwift.github.io.git
   branch: master
+  message: hexo + css
