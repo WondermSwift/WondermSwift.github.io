@@ -81,6 +81,7 @@ theme: next
 deploy:
   type: git
   #repo: git@git.coding.net:WondermSwift/BlogPages.git
-  repo: git@git.coding.net:WondermSwift/WondermBlog.git
+  #repo: git@git.coding.net:WondermSwift/WondermBlog.git
   #repo: git@git.dev.tencent.com:WondermSwift/WondermBlog.git
-  branch: coding-pages
+  repo: git@github.com:WondermSwift/.github.io.git
+  branch: master
