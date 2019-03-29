@@ -1,0 +1,1334 @@
+<!DOCTYPE html>
+
+
+
+
+
+
+
+
+
+
+
+
+  
+
+
+<html class="theme-next mist use-motion" lang="zh-CN">
+<head><meta name="generator" content="Hexo 3.8.0">
+  <meta charset="UTF-8">
+<meta http-equiv="X-UA-Compatible" content="IE=edge">
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=2">
+<meta name="theme-color" content="#222">
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+<link rel="stylesheet" href="/lib/font-awesome/css/font-awesome.min.css?v=4.6.2">
+
+<link rel="stylesheet" href="/css/main.css?v=7.0.1">
+
+
+  <link rel="apple-touch-icon" sizes="180x180" href="/uploads/favicon.ico?v=7.0.1">
+
+
+  <link rel="icon" type="image/png" sizes="32x32" href="/uploads/favicon.ico?v=7.0.1">
+
+
+  <link rel="icon" type="image/png" sizes="16x16" href="/uploads/favicon.ico?v=7.0.1">
+
+
+  <link rel="mask-icon" href="/uploads/favicon.ico?v=7.0.1" color="#222">
+
+
+
+
+
+
+
+<script id="hexo.configurations">
+  var NexT = window.NexT || {};
+  var CONFIG = {
+    root: '/',
+    scheme: 'Mist',
+    version: '7.0.1',
+    sidebar: {"position":"left","display":"post","offset":12,"b2t":false,"scrollpercent":false,"onmobile":false,"dimmer":false},
+    fancybox: false,
+    fastclick: false,
+    lazyload: false,
+    tabs: true,
+    motion: {"enable":true,"async":false,"transition":{"post_block":"fadeIn","post_header":"slideDownIn","post_body":"slideDownIn","coll_header":"slideLeftIn","sidebar":"slideUpIn"}},
+    algolia: {
+      applicationID: '',
+      apiKey: '',
+      indexName: '',
+      hits: {"per_page":10},
+      labels: {"input_placeholder":"Search for Posts","hits_empty":"We didn't find any results for the search: ${query}","hits_stats":"${hits} results found in ${time} ms"}
+    }
+  };
+</script>
+
+
+  
+
+
+
+
+  <meta name="description" content="延时渲染下的半透明排序一直是个问题，性能和Shader的书写都不是很好，于是我们在各大AAA游戏中看到半透明时的网格，这次终于抽出时间来自己实现一下">
+<meta name="keywords" content="Shader,Unity,Toon">
+<meta property="og:type" content="article">
+<meta property="og:title" content="贝尔矩阵和后期模糊实现半透明">
+<meta property="og:url" content="http://www.wonderm.cc/2018/03/04/Unity-Shader-Dithering-Transparent/index.html">
+<meta property="og:site_name" content="白昼">
+<meta property="og:description" content="延时渲染下的半透明排序一直是个问题，性能和Shader的书写都不是很好，于是我们在各大AAA游戏中看到半透明时的网格，这次终于抽出时间来自己实现一下">
+<meta property="og:locale" content="zh-CN">
+<meta property="og:image" content="http://www.wonderm.cc/2018/03/04/Unity-Shader-Dithering-Transparent/Dither_01.png">
+<meta property="og:image" content="http://www.wonderm.cc/2018/03/04/Unity-Shader-Dithering-Transparent/Dither_AA_01.png">
+<meta property="og:image" content="http://www.wonderm.cc/2018/03/04/Unity-Shader-Dithering-Transparent/Dither_AA_Blur_x3_01.png">
+<meta property="og:image" content="http://www.wonderm.cc/2018/03/04/Unity-Shader-Dithering-Transparent/Dither_AA_Blur_x8_01.png">
+<meta property="og:image" content="http://www.wonderm.cc/2018/03/04/Unity-Shader-Dithering-Transparent/Dither_AA_Blur_x3_02.png">
+<meta property="og:updated_time" content="2019-03-04T15:13:27.723Z">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:title" content="贝尔矩阵和后期模糊实现半透明">
+<meta name="twitter:description" content="延时渲染下的半透明排序一直是个问题，性能和Shader的书写都不是很好，于是我们在各大AAA游戏中看到半透明时的网格，这次终于抽出时间来自己实现一下">
+<meta name="twitter:image" content="http://www.wonderm.cc/2018/03/04/Unity-Shader-Dithering-Transparent/Dither_01.png">
+
+
+
+
+
+
+  <link rel="canonical" href="http://www.wonderm.cc/2018/03/04/Unity-Shader-Dithering-Transparent/">
+
+
+
+<script id="page.configurations">
+  CONFIG.page = {
+    sidebar: "",
+  };
+</script>
+
+  <title>贝尔矩阵和后期模糊实现半透明 | 白昼</title>
+  
+
+
+
+
+
+
+
+
+
+
+
+
+  <noscript>
+  <style>
+  .use-motion .motion-element,
+  .use-motion .brand,
+  .use-motion .menu-item,
+  .sidebar-inner,
+  .use-motion .post-block,
+  .use-motion .pagination,
+  .use-motion .comments,
+  .use-motion .post-header,
+  .use-motion .post-body,
+  .use-motion .collection-title { opacity: initial; }
+
+  .use-motion .logo,
+  .use-motion .site-title,
+  .use-motion .site-subtitle {
+    opacity: initial;
+    top: initial;
+  }
+
+  .use-motion .logo-line-before i { left: initial; }
+  .use-motion .logo-line-after i { right: initial; }
+  </style>
+</noscript>
+
+</head>
+
+<body itemscope itemtype="http://schema.org/WebPage" lang="zh-CN">
+
+  
+  
+    
+  
+
+  <div class="container sidebar-position-left page-post-detail">
+    <div class="headband"></div>
+
+    <header id="header" class="header" itemscope itemtype="http://schema.org/WPHeader">
+      <div class="header-inner"><div class="site-brand-wrapper">
+  <div class="site-meta">
+    
+
+    <div class="custom-logo-site-title">
+      <a href="/" class="brand" rel="start">
+        <span class="logo-line-before"><i></i></span>
+        <span class="site-title">白昼</span>
+        <span class="logo-line-after"><i></i></span>
+      </a>
+    </div>
+    
+    
+  </div>
+
+  <div class="site-nav-toggle">
+    <button aria-label="切换导航栏">
+      <span class="btn-bar"></span>
+      <span class="btn-bar"></span>
+      <span class="btn-bar"></span>
+    </button>
+  </div>
+</div>
+
+
+
+<nav class="site-nav">
+  
+    <ul id="menu" class="menu">
+      
+        
+        
+        
+          
+          <li class="menu-item menu-item-home">
+
+    
+    
+    
+      
+    
+
+    
+
+    <a href="/" rel="section"><i class="menu-item-icon fa fa-fw fa-home"></i> <br>首页</a>
+
+  </li>
+        
+        
+        
+          
+          <li class="menu-item menu-item-tags">
+
+    
+    
+    
+      
+    
+
+    
+
+    <a href="/tags/" rel="section"><i class="menu-item-icon fa fa-fw fa-tags"></i> <br>标签</a>
+
+  </li>
+        
+        
+        
+          
+          <li class="menu-item menu-item-archives">
+
+    
+    
+    
+      
+    
+
+    
+
+    <a href="/archives/" rel="section"><i class="menu-item-icon fa fa-fw fa-archive"></i> <br>归档</a>
+
+  </li>
+        
+        
+        
+          
+          <li class="menu-item menu-item-about">
+
+    
+    
+    
+      
+    
+
+    
+
+    <a href="/about/" rel="section"><i class="menu-item-icon fa fa-fw fa-user"></i> <br>关于</a>
+
+  </li>
+
+      
+      
+        <li class="menu-item menu-item-search">
+          
+            <a href="javascript:;" class="popup-trigger">
+          
+            
+              <i class="menu-item-icon fa fa-search fa-fw"></i> <br>搜索</a>
+        </li>
+      
+    </ul>
+  
+
+  
+    
+
+  
+
+  
+    <div class="site-search">
+      
+  <div class="popup search-popup local-search-popup">
+  <div class="local-search-header clearfix">
+    <span class="search-icon">
+      <i class="fa fa-search"></i>
+    </span>
+    <span class="popup-btn-close">
+      <i class="fa fa-times-circle"></i>
+    </span>
+    <div class="local-search-input-wrapper">
+      <input autocomplete="off" placeholder="搜索..." spellcheck="false" type="text" id="local-search-input">
+    </div>
+  </div>
+  <div id="local-search-result"></div>
+</div>
+
+
+
+    </div>
+  
+</nav>
+
+
+
+  
+
+
+
+</div>
+    </header>
+
+    
+
+
+    <main id="main" class="main">
+      <div class="main-inner">
+        <div class="content-wrap">
+          
+          <div id="content" class="content">
+            
+
+  <div id="posts" class="posts-expand">
+    
+
+  
+
+  
+  
+  
+
+  
+
+  <article class="post post-type-normal" itemscope itemtype="http://schema.org/Article">
+  
+  
+  
+  <div class="post-block">
+    <link itemprop="mainEntityOfPage" href="http://www.wonderm.cc/2018/03/04/Unity-Shader-Dithering-Transparent/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="name" content="白昼">
+      <meta itemprop="description" content="wonderm-swift@hotmail.com">
+      <meta itemprop="image" content="/uploads/Avatar.jpg">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="白昼">
+    </span>
+
+    
+      <header class="post-header">
+
+        
+        
+          <h1 class="post-title" itemprop="name headline">贝尔矩阵和后期模糊实现半透明
+
+              
+            
+          </h1>
+        
+
+        <div class="post-meta">
+          <span class="post-time">
+
+            
+            
+            
+
+            
+              <span class="post-meta-item-icon">
+                <i class="fa fa-calendar-o"></i>
+              </span>
+              
+                <span class="post-meta-item-text">发表于</span>
+              
+
+              
+                
+              
+
+              <time title="创建时间：2018-03-04 07:52:32" itemprop="dateCreated datePublished" datetime="2018-03-04T07:52:32+08:00">2018-03-04</time>
+            
+
+            
+              
+
+              
+                
+                <span class="post-meta-divider">|</span>
+                
+
+                <span class="post-meta-item-icon">
+                  <i class="fa fa-calendar-check-o"></i>
+                </span>
+                
+                  <span class="post-meta-item-text">更新于</span>
+                
+                <time title="修改时间：2019-03-04 23:13:27" itemprop="dateModified" datetime="2019-03-04T23:13:27+08:00">2019-03-04</time>
+              
+            
+          </span>
+
+          
+            <span class="post-category">
+            
+              <span class="post-meta-divider">|</span>
+            
+              <span class="post-meta-item-icon">
+                <i class="fa fa-folder-o"></i>
+              </span>
+              
+                <span class="post-meta-item-text">分类于</span>
+              
+              
+                <span itemprop="about" itemscope itemtype="http://schema.org/Thing"><a href="/categories/Unity/" itemprop="url" rel="index"><span itemprop="name">Unity</span></a></span>
+
+                
+                
+              
+            </span>
+          
+
+          
+            
+            
+          
+
+          
+          
+
+          
+
+          
+
+          
+
+        </div>
+      </header>
+    
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+
+      
+      
+
+      
+        <p>延时渲染下的半透明排序一直是个问题，性能和Shader的书写都不是很好，于是我们在各大AAA游戏中看到半透明时的网格，这次终于抽出时间来自己实现一下</p>
+<a id="more"></a>
+<p>之前在玩MGS时就看到了明显的网格效果，尤其当相机穿过角色脑袋时，当时才刚刚接触3D游戏开发不久 Shader 水平也仅停留在看过一本 Shader 入门的快餐书籍上，并不能理解是怎么做到的，前段时间又读了一次Unity的文档，有了基本思路</p>
+<hr>
+<h3 id="解决问题步骤"><a href="#解决问题步骤" class="headerlink" title="解决问题步骤"></a>解决问题步骤</h3><ol>
+<li>生成<code>Dither</code>矩阵</li>
+<li>编写剔除 Shader</li>
+<li>标记透明区域</li>
+<li>后期区域模糊</li>
+<li>优化最终效果</li>
+</ol>
+<hr>
+<h3 id="Ordered-Dithering"><a href="#Ordered-Dithering" class="headerlink" title="Ordered Dithering"></a>Ordered Dithering</h3><p>最早了解到这个名词是在 <a href="http://allenchou.net/2016/05/a-brain-dump-of-what-i-worked-on-for-uncharted-4-chinese/" target="_blank" rel="noopener">allenchou</a> 的博客上，<a href="https://en.wikipedia.org/wiki/Ordered_dithering" target="_blank" rel="noopener">贝尔矩阵</a> 的原理也被揭示出来</p>
+<p>矩阵的生成Wiki上给了公式，可以从二阶矩阵生成任意阶</p>
+<p><del>直接套用</del> 作为程序员，除非逼不得已所有造轮子的行为都应该制止，面向Github编程的我花了两分钟就得到通项公式，顺带的到了挖洞Shader，验证了下程序的正确性可以放心食用</p>
+<p><a href="https://github.com/lifangjie/BayerDistanceDither" target="_blank" rel="noopener">别人的轮子 ( lifangjie/BayerDistanceDither )</a></p>
+<figure class="highlight csharp"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br><span class="line">45</span><br><span class="line">46</span><br><span class="line">47</span><br><span class="line">48</span><br><span class="line">49</span><br><span class="line">50</span><br></pre></td><td class="code"><pre><span class="line"><span class="function"><span class="keyword">private</span> <span class="keyword">static</span> <span class="keyword">void</span> <span class="title">BayerMatrix</span>(<span class="params"><span class="keyword">ref</span> <span class="keyword">float</span>[] output, <span class="keyword">int</span> n</span>)</span></span><br><span class="line"><span class="function"></span>&#123;</span><br><span class="line">    Assert.IsTrue(Mathf.IsPowerOfTwo(n) &amp;&amp; n &gt; <span class="number">1</span>);</span><br><span class="line">    &#123;</span><br><span class="line">        <span class="keyword">int</span> log2N = Mathf.RoundToInt(Mathf.Log(n, <span class="number">2</span>));</span><br><span class="line">        <span class="keyword">int</span>[,] temp = <span class="keyword">new</span> <span class="keyword">int</span>[n, n];</span><br><span class="line">        temp[<span class="number">0</span>, <span class="number">0</span>] = <span class="number">0</span>;</span><br><span class="line">        temp[<span class="number">0</span>, <span class="number">1</span>] = <span class="number">3</span>;</span><br><span class="line">        temp[<span class="number">1</span>, <span class="number">0</span>] = <span class="number">2</span>;</span><br><span class="line">        temp[<span class="number">1</span>, <span class="number">1</span>] = <span class="number">1</span>;</span><br><span class="line">        <span class="keyword">int</span> currentSize = <span class="number">2</span>;</span><br><span class="line">        <span class="keyword">for</span> (<span class="keyword">int</span> i = <span class="number">1</span>; i &lt; log2N; i++)</span><br><span class="line">        &#123;</span><br><span class="line">            <span class="keyword">for</span> (<span class="keyword">int</span> row = <span class="number">0</span>; row &lt; currentSize; row++)</span><br><span class="line">            &#123;</span><br><span class="line">                <span class="keyword">for</span> (<span class="keyword">int</span> col = <span class="number">0</span>; col &lt; currentSize; col++)</span><br><span class="line">                &#123;</span><br><span class="line">                    temp[row, col + currentSize] = temp[row, col] * <span class="number">4</span> + <span class="number">3</span>;</span><br><span class="line">                &#125;</span><br><span class="line">            &#125;</span><br><span class="line">            <span class="keyword">for</span> (<span class="keyword">int</span> row = <span class="number">0</span>; row &lt; currentSize; row++)</span><br><span class="line">            &#123;</span><br><span class="line">                <span class="keyword">for</span> (<span class="keyword">int</span> col = <span class="number">0</span>; col &lt; currentSize; col++)</span><br><span class="line">                &#123;</span><br><span class="line">                    temp[row + currentSize, col] = temp[row, col] * <span class="number">4</span> + <span class="number">2</span>;</span><br><span class="line">                &#125;</span><br><span class="line">            &#125;</span><br><span class="line">            <span class="keyword">for</span> (<span class="keyword">int</span> row = <span class="number">0</span>; row &lt; currentSize; row++)</span><br><span class="line">            &#123;</span><br><span class="line">                <span class="keyword">for</span> (<span class="keyword">int</span> col = <span class="number">0</span>; col &lt; currentSize; col++)</span><br><span class="line">                &#123;</span><br><span class="line">                    temp[row + currentSize, col + currentSize] = temp[row, col] * <span class="number">4</span> + <span class="number">1</span>;</span><br><span class="line">                &#125;</span><br><span class="line">            &#125;</span><br><span class="line">            <span class="keyword">for</span> (<span class="keyword">int</span> row = <span class="number">0</span>; row &lt; currentSize; row++)</span><br><span class="line">            &#123;</span><br><span class="line">                <span class="keyword">for</span> (<span class="keyword">int</span> col = <span class="number">0</span>; col &lt; currentSize; col++)</span><br><span class="line">                &#123;</span><br><span class="line">                    temp[row, col] = temp[row, col] * <span class="number">4</span>;</span><br><span class="line">                &#125;</span><br><span class="line">            &#125;</span><br><span class="line"></span><br><span class="line">            currentSize *= <span class="number">2</span>;</span><br><span class="line">        &#125;</span><br><span class="line">        <span class="keyword">for</span> (<span class="keyword">int</span> i = <span class="number">0</span>; i &lt; n * n; i++)</span><br><span class="line">        &#123;</span><br><span class="line">            output[i] = <span class="number">1f</span> + temp[i / n, i % n];</span><br><span class="line">        &#125;</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<hr>
+<h3 id="Dither-Shader"><a href="#Dither-Shader" class="headerlink" title="Dither Shader"></a>Dither Shader</h3><p>将上面项目的 Shader 改为自己的习惯</p>
+<h4 id="Frag-Shader"><a href="#Frag-Shader" class="headerlink" title="Frag Shader"></a>Frag Shader</h4><figure class="highlight glsl"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br></pre></td><td class="code"><pre><span class="line">V2F:</span><br><span class="line">float4 screenPos :   SV_POSITION;</span><br><span class="line"></span><br><span class="line">VERT:</span><br><span class="line">o.screenPos = UnityObjectToClipPos(v.vertex);</span><br><span class="line"></span><br><span class="line">FRAG:</span><br><span class="line">ClipDither(_Dither, i.screenPos.xy );</span><br><span class="line"></span><br><span class="line">ClipDither:</span><br><span class="line"><span class="type">int</span> <span class="keyword">index</span> = (<span class="type">int</span>(screenPos.x) % Size) * Size + <span class="type">int</span>(screenPos.y) % Size;</span><br><span class="line"><span class="keyword">return</span> (depth - DitherMatrix[<span class="keyword">index</span>]/(Size * Size+ <span class="number">1</span>));</span><br></pre></td></tr></table></figure>
+<h4 id="Surface-Shader"><a href="#Surface-Shader" class="headerlink" title="Surface Shader"></a>Surface Shader</h4><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line">Surface:</span><br><span class="line">ClipDither(_Dither, IN.screenPos);</span><br><span class="line"></span><br><span class="line">ClipDither:</span><br><span class="line">float2 pos = screenPos.xy /screenPos.w * _ScreenParams.xy;</span><br></pre></td></tr></table></figure>
+<h3 id="区域标记"><a href="#区域标记" class="headerlink" title="区域标记"></a>区域标记</h3><p>到了最麻烦的一个步骤，本身思路很清晰，标记了就好，但是几种标记方案都有各种坑需要踩</p>
+<h4 id="Stencil"><a href="#Stencil" class="headerlink" title="Stencil"></a>Stencil</h4><p>这个是最容易想到的方法</p>
+<ol>
+<li><p>对象Shader</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line">Stencil </span><br><span class="line">&#123;</span><br><span class="line">    Ref 2</span><br><span class="line">    Comp Always</span><br><span class="line">    Pass Replace</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+</li>
+<li><p>后期Shader</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line">Stencil </span><br><span class="line">&#123;</span><br><span class="line">    Ref 2</span><br><span class="line">    Comp Equal</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+</li>
+</ol>
+<p>如果你以为这么个就成了说明你肯定没有自己尝试过Unity在<code>OnRenderImage</code>之前会清除<code>Z+Stancil</code>，通过<code>FrameDebug</code>可以清楚的看到，在<a href="https://twitter.com/desolusdev/status/776283681312956416" target="_blank" rel="noopener">Twitter</a>上看到有人说把深度改成24就可以保留，文档上和RT上确实是这么写的，但是实际测试的结果并不是这样的，被清除的干干净净，也许我的姿势不对，但是据我多方查证搜索，还没有一个姿势对的</p>
+<h4 id="Stencil-CommandBuffer"><a href="#Stencil-CommandBuffer" class="headerlink" title="Stencil + CommandBuffer"></a>Stencil + CommandBuffer</h4><p>既然被提前清理了，那我只要开个<code>CommandBuffer</code>把它保留下来就Ok了，然后到<code>OnRenderImage</code>里把 RT 拿到就好了</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line">cmdBuffer = new CommandBuffer();</span><br><span class="line">cmdBuffer.name = &quot;DitherMaskBuffer&quot;;</span><br><span class="line">cmdBuffer.Blit(BuiltinRenderTextureType.None, BuiltinRenderTextureType.CurrentActive, stencilMat);</span><br><span class="line">cam.AddCommandBuffer(CameraEvent.BeforeImageEffectsOpaque, cmdBuffer);</span><br></pre></td></tr></table></figure>
+<p>如果你以为这么个就成了说明你肯定没有自己尝试过x2<br>被挖过洞的对象拿到的标记区域也是挖了洞的，这个是小事，就跟屏幕描边一样平移四次就可以解决，<code>Forward</code>下一切正常，但是<code>Deferred</code>模式下<code>Surface Shader</code>的标记区域又没有了x2，只剩下<code>Frag Shader</code>，开启帧调试，发现<code>Stencil Clear</code>这次发生在<code>Shadow Collection</code>时，我看了下<code>CommandBuffer</code>的<code>CameraEvent</code>，只有一句<code>花Q</code>可以说</p>
+<h4 id="Replacement-Shader"><a href="#Replacement-Shader" class="headerlink" title="Replacement Shader"></a>Replacement Shader</h4><p>突然想起前几天Unity的微信公众号推了一篇文章 <a href="http://forum.china.unity3d.com/thread-30958-1-1.html" target="_blank" rel="noopener">Unity 着色器训练营(3) - 替换着色器方法</a></p>
+<p>也是个不错的思路，直接替换掉所有的Shader，分为非模糊和要模糊两种，区分黑白标记就好了,透明的也要注意不透明和全透明时不要模糊</p>
+<ol>
+<li><p>Shader</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line">RenderType = Dither</span><br><span class="line"></span><br><span class="line">float4 black =0;</span><br><span class="line">float4 white =1;</span><br><span class="line">int a = _Dither&gt;0 &amp;&amp; _Dither &lt;1;</span><br><span class="line">return lerp(black,white,a);</span><br></pre></td></tr></table></figure>
+</li>
+<li><p>ImageEffect</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">cam.SetReplacementShader(replace, &quot;RenderType&quot;);</span><br></pre></td></tr></table></figure>
+</li>
+</ol>
+<p>如果你以为这么个就成了说明你肯定没有自己尝试过x3<br>事情总是一波三折，<code>Forward</code>下一切正常，但是<code>Deferred</code>模式下<code>ReplacementShader</code>效果全都没有了x3<br>我翻看了文档，关于<code>ReplacementShader</code>的部分连<code>RenderPath</code>一个字都没有提及，暂且使用”Forward”模式出效果吧</p>
+<p>至此我们生成了模糊区域的Mask图，三种方法都得开启另外一个相机来生成RT，并且都只能在<code>RenderPath=Forward</code>模式下完美工作<br>有朋友说有插件能在<code>Deferred</code>下使用<code>ReplacementShader</code>，<del>暂且等他的回复</del>插件已经收到还没有看</p>
+<h4 id="Draw-Mesh"><a href="#Draw-Mesh" class="headerlink" title="Draw Mesh"></a>Draw Mesh</h4><p>其实有第四中方法，来源是 <a href="http://www.u3dnotes.com/archives/1397" target="_blank" rel="noopener">利用Stencil来优化局部后处理特效</a><br>链接中给的项目确实在<code>Deferred下</code>也能正常工作，但是我并没有去尝试，原因是每个Mesh额外单独Draw一次，而且有多次绘制Quad，远不如另外一个相机用<code>Forward</code>出RT方便使用<br><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line"> foreach (MeshFilter r in glowTargets)</span><br><span class="line">&#123;</span><br><span class="line">    Graphics.DrawMeshNow(r.sharedMesh, r.transform.localToWorldMatrix);//绘制发光物体</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure></p>
+<p>同事使用的方法应该类似于这一种，以前大概扫了一眼代码，有时间需要交流下，他的分享</p>
+<p><a href="https://cowlevel.net/article/1917657" target="_blank" rel="noopener">让角色半透明：从 Ordered Dithering 说起（一）</a></p>
+<p><a href="https://cowlevel.net/article/1917881" target="_blank" rel="noopener">让角色半透明：后期模糊（二）</a></p>
+<p><a href="https://cowlevel.net/article/1918399" target="_blank" rel="noopener">让角色半透明：树形结构（三）</a></p>
+<h3 id="后期模糊"><a href="#后期模糊" class="headerlink" title="后期模糊"></a>后期模糊</h3><p>至此我们已经拿到了标记需要模糊区域的遮罩贴图了，在以前的屏幕模糊上加入遮罩，平时只模糊遮罩部分，开启模糊时模糊全屏，这个非常的简单</p>
+<p>屏幕模糊效果<br><a href="../../../../../2017/07/07/Shader-Image-Effect-02/">Shader 屏幕后期特效-02</a></p>
+<h3 id="最终效果"><a href="#最终效果" class="headerlink" title="最终效果"></a>最终效果</h3><p>你可能会注意到边缘的部分有像素的颜色比较高，其实在Shader中对Mask先模糊一次就可以解决，但我没有这么做的原因是这是放大五倍之后看到的效果，正常缩放是没有这么明显的</p>
+<h4 id="待优化"><a href="#待优化" class="headerlink" title="待优化"></a>待优化</h4><p>现在看到的透明度和真正的透明比起来其实不透明度是更高的，可以选一个对照来矫正不透明变化曲线来达到更加接近的效果</p>
+<p>挖洞<br>Scale=5x<br>Alpha=0.368</p>
+<p><img src="Dither_01.png" alt="挖洞细节"></p>
+<p>挖洞 + 屏幕AA<br>Scale=5x<br>Alpha=0.368</p>
+<p><img src="Dither_AA_01.png" alt="屏幕AA"></p>
+<p>挖洞 + 屏幕AA + 屏幕模糊<br>Scale=5x<br>Alpha=0.368<br>BlurSample=3<br>BlurRadius=0.075</p>
+<p><img src="Dither_AA_Blur_x3_01.png" alt="屏幕模糊采样三次"></p>
+<p>挖洞 + 屏幕AA + 屏幕模糊<br>Scale=5x<br>Alpha=0.368<br>BlurSample=8<br>BlurRadius=0.075</p>
+<p><img src="Dither_AA_Blur_x8_01.png" alt="屏幕模糊采样八次"></p>
+<p>挖洞 + 屏幕AA + 屏幕模糊<br>Scale=1x<br>Alpha=0.368<br>BlurSample=3<br>BlurRadius=0.075</p>
+<p><img src="Dither_AA_Blur_x3_02.png" alt="正常效果"></p>
+<h3 id="参考文章"><a href="#参考文章" class="headerlink" title="参考文章"></a>参考文章</h3><ol>
+<li><a href="https://forum.unity.com/threads/leveraging-stencil-buffers-for-masked-post-effects.313466/" target="_blank" rel="noopener">Leveraging Stencil buffers for masked post effects</a></li>
+<li><a href="http://qiankanglai.me/2015/03/07/unity-posteffect-stencil/" target="_blank" rel="noopener">Take advantage of Stencil buffer in Post Process</a></li>
+<li><a href="https://answers.unity.com/questions/1255829/stencil-buffer-in-image-effect-not-updating.html" target="_blank" rel="noopener">Stencil Buffer in Image Effect not updating</a></li>
+<li><a href="https://forum.unity.com/threads/commandbuffer-blit-isnt-stencil-buffer-friendly.432776/" target="_blank" rel="noopener">CommandBuffer.Blit() isn’t stencil buffer friendly</a></li>
+<li><a href="https://forum.unity.com/threads/unity-5-6-0f3-empty-stencil-buffer-onrenderimage.473444/" target="_blank" rel="noopener">[Unity 5.6.0f3] empty stencil buffer OnRenderImage</a></li>
+<li><a href="http://lib.csdn.net/article/unity3d/36757" target="_blank" rel="noopener">关于unity shader的StencilBuffer</a></li>
+<li><a href="https://docs.unity3d.com/Manual/SL-Stencil.html" target="_blank" rel="noopener">ShaderLab: Stencil</a></li>
+</ol>
+
+      
+    </div>
+
+    
+
+    
+    
+    
+
+    
+
+    
+      
+    
+    
+
+    
+
+    <footer class="post-footer">
+      
+        <div class="post-tags">
+          
+            <a href="/tags/Shader/" rel="tag"># Shader</a>
+          
+            <a href="/tags/Unity/" rel="tag"># Unity</a>
+          
+            <a href="/tags/Toon/" rel="tag"># Toon</a>
+          
+        </div>
+      
+
+      
+      
+      
+
+      
+        <div class="post-nav">
+          <div class="post-nav-next post-nav-item">
+            
+              <a href="/2017/08/09/PictureSwitchByBG/" rel="next" title="不同底色下显示不同内容的图片">
+                <i class="fa fa-chevron-left"></i> 不同底色下显示不同内容的图片
+              </a>
+            
+          </div>
+
+          <span class="post-nav-divider"></span>
+
+          <div class="post-nav-prev post-nav-item">
+            
+              <a href="/2019/03/04/CommandBuffer-01/" rel="prev" title="CommandBuffer_01 标记特殊区域">
+                CommandBuffer_01 标记特殊区域 <i class="fa fa-chevron-right"></i>
+              </a>
+            
+          </div>
+        </div>
+      
+
+      
+      
+    </footer>
+  </div>
+  
+  
+  
+  </article>
+
+
+  </div>
+
+
+          </div>
+          
+
+  
+
+
+
+        </div>
+        
+          
+  
+  <div class="sidebar-toggle">
+    <div class="sidebar-toggle-line-wrap">
+      <span class="sidebar-toggle-line sidebar-toggle-line-first"></span>
+      <span class="sidebar-toggle-line sidebar-toggle-line-middle"></span>
+      <span class="sidebar-toggle-line sidebar-toggle-line-last"></span>
+    </div>
+  </div>
+
+  <aside id="sidebar" class="sidebar">
+    <div class="sidebar-inner">
+
+      
+
+      
+        <ul class="sidebar-nav motion-element">
+          <li class="sidebar-nav-toc sidebar-nav-active" data-target="post-toc-wrap">
+            文章目录
+          </li>
+          <li class="sidebar-nav-overview" data-target="site-overview-wrap">
+            站点概览
+          </li>
+        </ul>
+      
+
+      <div class="site-overview-wrap sidebar-panel">
+        <div class="site-overview">
+          <div class="site-author motion-element" itemprop="author" itemscope itemtype="http://schema.org/Person">
+            
+              <img class="site-author-image" itemprop="image" src="/uploads/Avatar.jpg" alt="白昼">
+            
+              <p class="site-author-name" itemprop="name">白昼</p>
+              <p class="site-description motion-element" itemprop="description">wonderm-swift@hotmail.com</p>
+          </div>
+
+          
+            <nav class="site-state motion-element">
+              
+                <div class="site-state-item site-state-posts">
+                
+                  <a href="/archives/">
+                
+                    <span class="site-state-item-count">48</span>
+                    <span class="site-state-item-name">日志</span>
+                  </a>
+                </div>
+              
+
+              
+                
+                
+                <div class="site-state-item site-state-categories">
+                  <a href="/categories/index.html">
+                    
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                    <span class="site-state-item-count">10</span>
+                    <span class="site-state-item-name">分类</span>
+                  </a>
+                </div>
+              
+
+              
+                
+                
+                <div class="site-state-item site-state-tags">
+                  <a href="/tags/index.html">
+                    
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                    <span class="site-state-item-count">23</span>
+                    <span class="site-state-item-name">标签</span>
+                  </a>
+                </div>
+              
+            </nav>
+          
+
+          
+
+          
+
+          
+
+          
+          
+            <div class="links-of-blogroll motion-element links-of-blogroll-block">
+              <div class="links-of-blogroll-title">
+                <i class="fa  fa-fw fa-link"></i>
+                友链
+              </div>
+              <ul class="links-of-blogroll-list">
+                
+                  <li class="links-of-blogroll-item">
+                    <a href="http://www.gamemaker.cn/" title="http://www.gamemaker.cn/" rel="noopener" target="_blank">GameMaker</a>
+                  </li>
+                
+                  <li class="links-of-blogroll-item">
+                    <a href="http://www.magecorn.com/" title="http://www.magecorn.com/" rel="noopener" target="_blank">傲娇玉米站</a>
+                  </li>
+                
+                  <li class="links-of-blogroll-item">
+                    <a href="http://soragame.com/" title="http://soragame.com/" rel="noopener" target="_blank">波导Lucario</a>
+                  </li>
+                
+                  <li class="links-of-blogroll-item">
+                    <a href="http://deciia.wang/" title="http://deciia.wang/" rel="noopener" target="_blank">未来印象</a>
+                  </li>
+                
+                  <li class="links-of-blogroll-item">
+                    <a href="http://www.tuoyitian.com/" title="http://www.tuoyitian.com/" rel="noopener" target="_blank">鸵翼天游戏</a>
+                  </li>
+                
+              </ul>
+            </div>
+          
+
+          
+            
+          
+          
+
+        </div>
+      </div>
+
+      
+      <!--noindex-->
+        <div class="post-toc-wrap motion-element sidebar-panel sidebar-panel-active">
+          <div class="post-toc">
+
+            
+            
+            
+            
+
+            
+              <div class="post-toc-content"><ol class="nav"><li class="nav-item nav-level-3"><a class="nav-link" href="#解决问题步骤"><span class="nav-number">1.</span> <span class="nav-text">解决问题步骤</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#Ordered-Dithering"><span class="nav-number">2.</span> <span class="nav-text">Ordered Dithering</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#Dither-Shader"><span class="nav-number">3.</span> <span class="nav-text">Dither Shader</span></a><ol class="nav-child"><li class="nav-item nav-level-4"><a class="nav-link" href="#Frag-Shader"><span class="nav-number">3.1.</span> <span class="nav-text">Frag Shader</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#Surface-Shader"><span class="nav-number">3.2.</span> <span class="nav-text">Surface Shader</span></a></li></ol></li><li class="nav-item nav-level-3"><a class="nav-link" href="#区域标记"><span class="nav-number">4.</span> <span class="nav-text">区域标记</span></a><ol class="nav-child"><li class="nav-item nav-level-4"><a class="nav-link" href="#Stencil"><span class="nav-number">4.1.</span> <span class="nav-text">Stencil</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#Stencil-CommandBuffer"><span class="nav-number">4.2.</span> <span class="nav-text">Stencil + CommandBuffer</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#Replacement-Shader"><span class="nav-number">4.3.</span> <span class="nav-text">Replacement Shader</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#Draw-Mesh"><span class="nav-number">4.4.</span> <span class="nav-text">Draw Mesh</span></a></li></ol></li><li class="nav-item nav-level-3"><a class="nav-link" href="#后期模糊"><span class="nav-number">5.</span> <span class="nav-text">后期模糊</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#最终效果"><span class="nav-number">6.</span> <span class="nav-text">最终效果</span></a><ol class="nav-child"><li class="nav-item nav-level-4"><a class="nav-link" href="#待优化"><span class="nav-number">6.1.</span> <span class="nav-text">待优化</span></a></li></ol></li><li class="nav-item nav-level-3"><a class="nav-link" href="#参考文章"><span class="nav-number">7.</span> <span class="nav-text">参考文章</span></a></li></ol></div>
+            
+
+          </div>
+        </div>
+      <!--/noindex-->
+      
+
+      
+
+    </div>
+  </aside>
+  
+
+
+        
+      </div>
+    </main>
+
+    <footer id="footer" class="footer">
+      <div class="footer-inner">
+        <div class="copyright">&copy; 2014 – <span itemprop="copyrightYear">2019</span>
+  <span class="with-love" id="animate">
+    <i class="fa fa-user"></i>
+  </span>
+  <span class="author" itemprop="copyrightHolder"><a href="mailto:wonderm-swift@hotmail.com?subject=发给白昼的邮件" target="_self">@白昼</a></span>
+
+  
+
+  
+</div>
+
+
+  <div class="powered-by">由 <a href="https://hexo.io" class="theme-link" rel="noopener" target="_blank">Hexo</a> 强力驱动 v3.8.0</div>
+
+
+
+  <span class="post-meta-divider">|</span>
+
+
+
+  <div class="theme-info">主题 – <a href="https://theme-next.org" class="theme-link" rel="noopener" target="_blank">NexT.Mist</a> v7.0.1</div>
+
+
+
+
+        
+
+
+
+
+
+
+
+
+        
+      </div>
+    </footer>
+
+    
+      <div class="back-to-top">
+        <i class="fa fa-arrow-up"></i>
+        
+      </div>
+    
+
+    
+
+    
+
+    
+  </div>
+
+  
+
+<script>
+  if (Object.prototype.toString.call(window.Promise) !== '[object Function]') {
+    window.Promise = null;
+  }
+</script>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+  
+  <script src="/lib/jquery/index.js?v=2.1.3"></script>
+
+  
+  <script src="/lib/velocity/velocity.min.js?v=1.2.1"></script>
+
+  
+  <script src="/lib/velocity/velocity.ui.min.js?v=1.2.1"></script>
+
+
+  
+
+
+  <script src="/js/src/utils.js?v=7.0.1"></script>
+
+  <script src="/js/src/motion.js?v=7.0.1"></script>
+
+
+
+  
+  
+
+
+  <script src="/js/src/schemes/muse.js?v=7.0.1"></script>
+
+
+
+
+  
+  <script src="/js/src/scrollspy.js?v=7.0.1"></script>
+<script src="/js/src/post-details.js?v=7.0.1"></script>
+
+
+
+  
+
+
+  <script src="/js/src/bootstrap.js?v=7.0.1"></script>
+
+
+  
+  
+
+
+  
+
+
+  
+  <script>
+    // Popup Window;
+    var isfetched = false;
+    var isXml = true;
+    // Search DB path;
+    var search_path = "search.xml";
+    if (search_path.length === 0) {
+      search_path = "search.xml";
+    } else if (/json$/i.test(search_path)) {
+      isXml = false;
+    }
+    var path = "/" + search_path;
+    // monitor main search box;
+
+    var onPopupClose = function (e) {
+      $('.popup').hide();
+      $('#local-search-input').val('');
+      $('.search-result-list').remove();
+      $('#no-result').remove();
+      $(".local-search-pop-overlay").remove();
+      $('body').css('overflow', '');
+    }
+
+    function proceedsearch() {
+      $("body")
+        .append('<div class="search-popup-overlay local-search-pop-overlay"></div>')
+        .css('overflow', 'hidden');
+      $('.search-popup-overlay').click(onPopupClose);
+      $('.popup').toggle();
+      var $localSearchInput = $('#local-search-input');
+      $localSearchInput.attr("autocapitalize", "none");
+      $localSearchInput.attr("autocorrect", "off");
+      $localSearchInput.focus();
+    }
+
+    // search function;
+    var searchFunc = function(path, search_id, content_id) {
+      'use strict';
+
+      // start loading animation
+      $("body")
+        .append('<div class="search-popup-overlay local-search-pop-overlay">' +
+          '<div id="search-loading-icon">' +
+          '<i class="fa fa-spinner fa-pulse fa-5x fa-fw"></i>' +
+          '</div>' +
+          '</div>')
+        .css('overflow', 'hidden');
+      $("#search-loading-icon").css('margin', '20% auto 0 auto').css('text-align', 'center');
+
+      
+
+      $.ajax({
+        url: path,
+        dataType: isXml ? "xml" : "json",
+        async: true,
+        success: function(res) {
+          // get the contents from search data
+          isfetched = true;
+          $('.popup').detach().appendTo('.header-inner');
+          var datas = isXml ? $("entry", res).map(function() {
+            return {
+              title: $("title", this).text(),
+              content: $("content",this).text(),
+              url: $("url" , this).text()
+            };
+          }).get() : res;
+          var input = document.getElementById(search_id);
+          var resultContent = document.getElementById(content_id);
+          var inputEventFunction = function() {
+            var searchText = input.value.trim().toLowerCase();
+            var keywords = searchText.split(/[\s\-]+/);
+            if (keywords.length > 1) {
+              keywords.push(searchText);
+            }
+            var resultItems = [];
+            if (searchText.length > 0) {
+              // perform local searching
+              datas.forEach(function(data) {
+                var isMatch = false;
+                var hitCount = 0;
+                var searchTextCount = 0;
+                var title = data.title.trim();
+                var titleInLowerCase = title.toLowerCase();
+                var content = data.content.trim().replace(/<[^>]+>/g,"");
+                
+                var contentInLowerCase = content.toLowerCase();
+                var articleUrl = decodeURIComponent(data.url).replace(/\/{2,}/g, '/');
+                var indexOfTitle = [];
+                var indexOfContent = [];
+                // only match articles with not empty titles
+                if(title != '') {
+                  keywords.forEach(function(keyword) {
+                    function getIndexByWord(word, text, caseSensitive) {
+                      var wordLen = word.length;
+                      if (wordLen === 0) {
+                        return [];
+                      }
+                      var startPosition = 0, position = [], index = [];
+                      if (!caseSensitive) {
+                        text = text.toLowerCase();
+                        word = word.toLowerCase();
+                      }
+                      while ((position = text.indexOf(word, startPosition)) > -1) {
+                        index.push({position: position, word: word});
+                        startPosition = position + wordLen;
+                      }
+                      return index;
+                    }
+
+                    indexOfTitle = indexOfTitle.concat(getIndexByWord(keyword, titleInLowerCase, false));
+                    indexOfContent = indexOfContent.concat(getIndexByWord(keyword, contentInLowerCase, false));
+                  });
+                  if (indexOfTitle.length > 0 || indexOfContent.length > 0) {
+                    isMatch = true;
+                    hitCount = indexOfTitle.length + indexOfContent.length;
+                  }
+                }
+
+                // show search results
+
+                if (isMatch) {
+                  // sort index by position of keyword
+
+                  [indexOfTitle, indexOfContent].forEach(function (index) {
+                    index.sort(function (itemLeft, itemRight) {
+                      if (itemRight.position !== itemLeft.position) {
+                        return itemRight.position - itemLeft.position;
+                      } else {
+                        return itemLeft.word.length - itemRight.word.length;
+                      }
+                    });
+                  });
+
+                  // merge hits into slices
+
+                  function mergeIntoSlice(text, start, end, index) {
+                    var item = index[index.length - 1];
+                    var position = item.position;
+                    var word = item.word;
+                    var hits = [];
+                    var searchTextCountInSlice = 0;
+                    while (position + word.length <= end && index.length != 0) {
+                      if (word === searchText) {
+                        searchTextCountInSlice++;
+                      }
+                      hits.push({position: position, length: word.length});
+                      var wordEnd = position + word.length;
+
+                      // move to next position of hit
+
+                      index.pop();
+                      while (index.length != 0) {
+                        item = index[index.length - 1];
+                        position = item.position;
+                        word = item.word;
+                        if (wordEnd > position) {
+                          index.pop();
+                        } else {
+                          break;
+                        }
+                      }
+                    }
+                    searchTextCount += searchTextCountInSlice;
+                    return {
+                      hits: hits,
+                      start: start,
+                      end: end,
+                      searchTextCount: searchTextCountInSlice
+                    };
+                  }
+
+                  var slicesOfTitle = [];
+                  if (indexOfTitle.length != 0) {
+                    slicesOfTitle.push(mergeIntoSlice(title, 0, title.length, indexOfTitle));
+                  }
+
+                  var slicesOfContent = [];
+                  while (indexOfContent.length != 0) {
+                    var item = indexOfContent[indexOfContent.length - 1];
+                    var position = item.position;
+                    var word = item.word;
+                    // cut out 100 characters
+                    var start = position - 20;
+                    var end = position + 80;
+                    if(start < 0){
+                      start = 0;
+                    }
+                    if (end < position + word.length) {
+                      end = position + word.length;
+                    }
+                    if(end > content.length){
+                      end = content.length;
+                    }
+                    slicesOfContent.push(mergeIntoSlice(content, start, end, indexOfContent));
+                  }
+
+                  // sort slices in content by search text's count and hits' count
+
+                  slicesOfContent.sort(function (sliceLeft, sliceRight) {
+                    if (sliceLeft.searchTextCount !== sliceRight.searchTextCount) {
+                      return sliceRight.searchTextCount - sliceLeft.searchTextCount;
+                    } else if (sliceLeft.hits.length !== sliceRight.hits.length) {
+                      return sliceRight.hits.length - sliceLeft.hits.length;
+                    } else {
+                      return sliceLeft.start - sliceRight.start;
+                    }
+                  });
+
+                  // select top N slices in content
+
+                  var upperBound = parseInt('1');
+                  if (upperBound >= 0) {
+                    slicesOfContent = slicesOfContent.slice(0, upperBound);
+                  }
+
+                  // highlight title and content
+
+                  function highlightKeyword(text, slice) {
+                    var result = '';
+                    var prevEnd = slice.start;
+                    slice.hits.forEach(function (hit) {
+                      result += text.substring(prevEnd, hit.position);
+                      var end = hit.position + hit.length;
+                      result += '<b class="search-keyword">' + text.substring(hit.position, end) + '</b>';
+                      prevEnd = end;
+                    });
+                    result += text.substring(prevEnd, slice.end);
+                    return result;
+                  }
+
+                  var resultItem = '';
+
+                  if (slicesOfTitle.length != 0) {
+                    resultItem += "<li><a href='" + articleUrl + "' class='search-result-title'>" + highlightKeyword(title, slicesOfTitle[0]) + "</a>";
+                  } else {
+                    resultItem += "<li><a href='" + articleUrl + "' class='search-result-title'>" + title + "</a>";
+                  }
+
+                  slicesOfContent.forEach(function (slice) {
+                    resultItem += "<a href='" + articleUrl + "'>" +
+                      "<p class=\"search-result\">" + highlightKeyword(content, slice) +
+                      "...</p>" + "</a>";
+                  });
+
+                  resultItem += "</li>";
+                  resultItems.push({
+                    item: resultItem,
+                    searchTextCount: searchTextCount,
+                    hitCount: hitCount,
+                    id: resultItems.length
+                  });
+                }
+              })
+            };
+            if (keywords.length === 1 && keywords[0] === "") {
+              resultContent.innerHTML = '<div id="no-result"><i class="fa fa-search fa-5x"></i></div>'
+            } else if (resultItems.length === 0) {
+              resultContent.innerHTML = '<div id="no-result"><i class="fa fa-frown-o fa-5x"></i></div>'
+            } else {
+              resultItems.sort(function (resultLeft, resultRight) {
+                if (resultLeft.searchTextCount !== resultRight.searchTextCount) {
+                  return resultRight.searchTextCount - resultLeft.searchTextCount;
+                } else if (resultLeft.hitCount !== resultRight.hitCount) {
+                  return resultRight.hitCount - resultLeft.hitCount;
+                } else {
+                  return resultRight.id - resultLeft.id;
+                }
+              });
+              var searchResultList = '<ul class=\"search-result-list\">';
+              resultItems.forEach(function (result) {
+                searchResultList += result.item;
+              })
+              searchResultList += "</ul>";
+              resultContent.innerHTML = searchResultList;
+            }
+          }
+
+          if ('auto' === 'auto') {
+            input.addEventListener('input', inputEventFunction);
+          } else {
+            $('.search-icon').click(inputEventFunction);
+            input.addEventListener('keypress', function (event) {
+              if (event.keyCode === 13) {
+                inputEventFunction();
+              }
+            });
+          }
+
+          // remove loading animation
+          $(".local-search-pop-overlay").remove();
+          $('body').css('overflow', '');
+
+          proceedsearch();
+        }
+      });
+    }
+
+    // handle and trigger popup window;
+    $('.popup-trigger').click(function(e) {
+      e.stopPropagation();
+      if (isfetched === false) {
+        searchFunc(path, 'local-search-input', 'local-search-result');
+      } else {
+        proceedsearch();
+      };
+    });
+
+    $('.popup-btn-close').click(onPopupClose);
+    $('.popup').click(function(e){
+      e.stopPropagation();
+    });
+    $(document).on('keyup', function (event) {
+      var shouldDismissSearchPopup = event.which === 27 &&
+        $('.search-popup').is(':visible');
+      if (shouldDismissSearchPopup) {
+        onPopupClose();
+      }
+    });
+  </script>
+
+
+
+
+
+  
+
+  
+
+  
+
+  
+
+  
+
+  
+
+  
+
+  
+
+  
+
+  
+
+  
+
+  
+
+  
+
+</body>
+</html>

@@ -1,0 +1,1279 @@
+<!DOCTYPE html>
+
+
+
+
+
+
+
+
+
+
+
+
+  
+
+
+<html class="theme-next mist use-motion" lang="zh-CN">
+<head><meta name="generator" content="Hexo 3.8.0">
+  <meta charset="UTF-8">
+<meta http-equiv="X-UA-Compatible" content="IE=edge">
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=2">
+<meta name="theme-color" content="#222">
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+<link rel="stylesheet" href="/lib/font-awesome/css/font-awesome.min.css?v=4.6.2">
+
+<link rel="stylesheet" href="/css/main.css?v=7.0.1">
+
+
+  <link rel="apple-touch-icon" sizes="180x180" href="/uploads/favicon.ico?v=7.0.1">
+
+
+  <link rel="icon" type="image/png" sizes="32x32" href="/uploads/favicon.ico?v=7.0.1">
+
+
+  <link rel="icon" type="image/png" sizes="16x16" href="/uploads/favicon.ico?v=7.0.1">
+
+
+  <link rel="mask-icon" href="/uploads/favicon.ico?v=7.0.1" color="#222">
+
+
+
+
+
+
+
+<script id="hexo.configurations">
+  var NexT = window.NexT || {};
+  var CONFIG = {
+    root: '/',
+    scheme: 'Mist',
+    version: '7.0.1',
+    sidebar: {"position":"left","display":"post","offset":12,"b2t":false,"scrollpercent":false,"onmobile":false,"dimmer":false},
+    fancybox: false,
+    fastclick: false,
+    lazyload: false,
+    tabs: true,
+    motion: {"enable":true,"async":false,"transition":{"post_block":"fadeIn","post_header":"slideDownIn","post_body":"slideDownIn","coll_header":"slideLeftIn","sidebar":"slideUpIn"}},
+    algolia: {
+      applicationID: '',
+      apiKey: '',
+      indexName: '',
+      hits: {"per_page":10},
+      labels: {"input_placeholder":"Search for Posts","hits_empty":"We didn't find any results for the search: ${query}","hits_stats":"${hits} results found in ${time} ms"}
+    }
+  };
+</script>
+
+
+  
+
+
+
+
+  <meta name="description" content="屏幕后期特效是很实用，这里对之前的学习做个总结记录">
+<meta name="keywords" content="Shader,Image Effect">
+<meta property="og:type" content="article">
+<meta property="og:title" content="Shader 屏幕后期特效-01">
+<meta property="og:url" content="http://www.wonderm.cc/2015/10/19/Shader-Image-Effect-01/index.html">
+<meta property="og:site_name" content="白昼">
+<meta property="og:description" content="屏幕后期特效是很实用，这里对之前的学习做个总结记录">
+<meta property="og:locale" content="zh-CN">
+<meta property="og:image" content="http://www.wonderm.cc/2015/10/19/Shader-Image-Effect-01/Unity-shader-imageEffect-book.jpg">
+<meta property="og:image" content="http://www.wonderm.cc/2015/10/19/Shader-Image-Effect-01/Shader-BSC.jpg">
+<meta property="og:image" content="http://www.wonderm.cc/2015/10/19/Shader-Image-Effect-01/Shader-Pixel.jpg">
+<meta property="og:image" content="http://www.wonderm.cc/2015/10/19/Shader-Image-Effect-01/Shader-Blur.jpg">
+<meta property="og:image" content="http://www.wonderm.cc/2015/10/19/Shader-Image-Effect-01/Shader-none.jpeg">
+<meta property="og:image" content="http://www.wonderm.cc/2015/10/19/Shader-Image-Effect-01/Shader-Effects.jpeg">
+<meta property="og:updated_time" content="2019-03-04T15:13:26.857Z">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:title" content="Shader 屏幕后期特效-01">
+<meta name="twitter:description" content="屏幕后期特效是很实用，这里对之前的学习做个总结记录">
+<meta name="twitter:image" content="http://www.wonderm.cc/2015/10/19/Shader-Image-Effect-01/Unity-shader-imageEffect-book.jpg">
+
+
+
+
+
+
+  <link rel="canonical" href="http://www.wonderm.cc/2015/10/19/Shader-Image-Effect-01/">
+
+
+
+<script id="page.configurations">
+  CONFIG.page = {
+    sidebar: "",
+  };
+</script>
+
+  <title>Shader 屏幕后期特效-01 | 白昼</title>
+  
+
+
+
+
+
+
+
+
+
+
+
+
+  <noscript>
+  <style>
+  .use-motion .motion-element,
+  .use-motion .brand,
+  .use-motion .menu-item,
+  .sidebar-inner,
+  .use-motion .post-block,
+  .use-motion .pagination,
+  .use-motion .comments,
+  .use-motion .post-header,
+  .use-motion .post-body,
+  .use-motion .collection-title { opacity: initial; }
+
+  .use-motion .logo,
+  .use-motion .site-title,
+  .use-motion .site-subtitle {
+    opacity: initial;
+    top: initial;
+  }
+
+  .use-motion .logo-line-before i { left: initial; }
+  .use-motion .logo-line-after i { right: initial; }
+  </style>
+</noscript>
+
+</head>
+
+<body itemscope itemtype="http://schema.org/WebPage" lang="zh-CN">
+
+  
+  
+    
+  
+
+  <div class="container sidebar-position-left page-post-detail">
+    <div class="headband"></div>
+
+    <header id="header" class="header" itemscope itemtype="http://schema.org/WPHeader">
+      <div class="header-inner"><div class="site-brand-wrapper">
+  <div class="site-meta">
+    
+
+    <div class="custom-logo-site-title">
+      <a href="/" class="brand" rel="start">
+        <span class="logo-line-before"><i></i></span>
+        <span class="site-title">白昼</span>
+        <span class="logo-line-after"><i></i></span>
+      </a>
+    </div>
+    
+    
+  </div>
+
+  <div class="site-nav-toggle">
+    <button aria-label="切换导航栏">
+      <span class="btn-bar"></span>
+      <span class="btn-bar"></span>
+      <span class="btn-bar"></span>
+    </button>
+  </div>
+</div>
+
+
+
+<nav class="site-nav">
+  
+    <ul id="menu" class="menu">
+      
+        
+        
+        
+          
+          <li class="menu-item menu-item-home">
+
+    
+    
+    
+      
+    
+
+    
+
+    <a href="/" rel="section"><i class="menu-item-icon fa fa-fw fa-home"></i> <br>首页</a>
+
+  </li>
+        
+        
+        
+          
+          <li class="menu-item menu-item-tags">
+
+    
+    
+    
+      
+    
+
+    
+
+    <a href="/tags/" rel="section"><i class="menu-item-icon fa fa-fw fa-tags"></i> <br>标签</a>
+
+  </li>
+        
+        
+        
+          
+          <li class="menu-item menu-item-archives">
+
+    
+    
+    
+      
+    
+
+    
+
+    <a href="/archives/" rel="section"><i class="menu-item-icon fa fa-fw fa-archive"></i> <br>归档</a>
+
+  </li>
+        
+        
+        
+          
+          <li class="menu-item menu-item-about">
+
+    
+    
+    
+      
+    
+
+    
+
+    <a href="/about/" rel="section"><i class="menu-item-icon fa fa-fw fa-user"></i> <br>关于</a>
+
+  </li>
+
+      
+      
+        <li class="menu-item menu-item-search">
+          
+            <a href="javascript:;" class="popup-trigger">
+          
+            
+              <i class="menu-item-icon fa fa-search fa-fw"></i> <br>搜索</a>
+        </li>
+      
+    </ul>
+  
+
+  
+    
+
+  
+
+  
+    <div class="site-search">
+      
+  <div class="popup search-popup local-search-popup">
+  <div class="local-search-header clearfix">
+    <span class="search-icon">
+      <i class="fa fa-search"></i>
+    </span>
+    <span class="popup-btn-close">
+      <i class="fa fa-times-circle"></i>
+    </span>
+    <div class="local-search-input-wrapper">
+      <input autocomplete="off" placeholder="搜索..." spellcheck="false" type="text" id="local-search-input">
+    </div>
+  </div>
+  <div id="local-search-result"></div>
+</div>
+
+
+
+    </div>
+  
+</nav>
+
+
+
+  
+
+
+
+</div>
+    </header>
+
+    
+
+
+    <main id="main" class="main">
+      <div class="main-inner">
+        <div class="content-wrap">
+          
+          <div id="content" class="content">
+            
+
+  <div id="posts" class="posts-expand">
+    
+
+  
+
+  
+  
+  
+
+  
+
+  <article class="post post-type-normal" itemscope itemtype="http://schema.org/Article">
+  
+  
+  
+  <div class="post-block">
+    <link itemprop="mainEntityOfPage" href="http://www.wonderm.cc/2015/10/19/Shader-Image-Effect-01/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="name" content="白昼">
+      <meta itemprop="description" content="wonderm-swift@hotmail.com">
+      <meta itemprop="image" content="/uploads/Avatar.jpg">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="白昼">
+    </span>
+
+    
+      <header class="post-header">
+
+        
+        
+          <h1 class="post-title" itemprop="name headline">Shader 屏幕后期特效-01
+
+              
+            
+          </h1>
+        
+
+        <div class="post-meta">
+          <span class="post-time">
+
+            
+            
+            
+
+            
+              <span class="post-meta-item-icon">
+                <i class="fa fa-calendar-o"></i>
+              </span>
+              
+                <span class="post-meta-item-text">发表于</span>
+              
+
+              
+                
+              
+
+              <time title="创建时间：2015-10-19 00:46:29" itemprop="dateCreated datePublished" datetime="2015-10-19T00:46:29+08:00">2015-10-19</time>
+            
+
+            
+              
+
+              
+                
+                <span class="post-meta-divider">|</span>
+                
+
+                <span class="post-meta-item-icon">
+                  <i class="fa fa-calendar-check-o"></i>
+                </span>
+                
+                  <span class="post-meta-item-text">更新于</span>
+                
+                <time title="修改时间：2019-03-04 23:13:26" itemprop="dateModified" datetime="2019-03-04T23:13:26+08:00">2019-03-04</time>
+              
+            
+          </span>
+
+          
+            <span class="post-category">
+            
+              <span class="post-meta-divider">|</span>
+            
+              <span class="post-meta-item-icon">
+                <i class="fa fa-folder-o"></i>
+              </span>
+              
+                <span class="post-meta-item-text">分类于</span>
+              
+              
+                <span itemprop="about" itemscope itemtype="http://schema.org/Thing"><a href="/categories/Shader/" itemprop="url" rel="index"><span itemprop="name">Shader</span></a></span>
+
+                
+                
+              
+            </span>
+          
+
+          
+            
+            
+          
+
+          
+          
+
+          
+
+          
+
+          
+
+        </div>
+      </header>
+    
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+
+      
+      
+
+      
+        <p>屏幕后期特效是很实用，这里对之前的学习做个总结记录<br><a id="more"></a><br>前段时间买了一本书，很适合入门学习，<br><img src="Unity-shader-imageEffect-book.jpg" alt="教材"></p>
+<h3 id="一、后期特效"><a href="#一、后期特效" class="headerlink" title="一、后期特效"></a>一、后期特效</h3><p>学习编写Shader一个很有用的地方就是可以创建各种自定义的画面特效，也被称为后期特效（post effects）。使用这些画面特效，我们可以创建很多美妙的实时图像，例如高光（Bloom），运动模糊（Motion Blur），HDR特效（HDR effects）等等。大多数市面上的现代游戏使用了很多这样的画面特效，以此来得到景深效果，高光效果，甚至是进行颜色矫正。</p>
+<p>后期特效的工作方式是这样的，抓取一个完整的画面图像（或纹理），使用Shader在GPU上处理它的像素后，再返回给Unity的渲染器渲染到屏幕上，也就是一个后期处理的过程。这允许我们可以对渲染后的游戏图像进行实时地逐像素操作，从而给了我们一个全局的控制能力。</p>
+<p>Unity提供了<code>OnRenderImage</code>这个方法供我们对渲染在屏幕上的画面或者纹理进行处理，在绘制前的每帧被调用，因此我们会在每帧对其进行处理然后返回给Unity就可以对画面效果进行处理。也就是说为屏幕创建一个材质，然后给他加上Shader使用Sahder中的方法就像处理贴图一样的处理屏幕纹理就可以了。</p>
+<h3 id="二、结构代码"><a href="#二、结构代码" class="headerlink" title="二、结构代码"></a>二、结构代码</h3><p>屏幕特效的 基本结构就是一个挂在摄像机上的脚本和一个效果处理Shader</p>
+<p>C# 代码如下<br><figure class="highlight csharp"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br><span class="line">45</span><br><span class="line">46</span><br><span class="line">47</span><br><span class="line">48</span><br><span class="line">49</span><br><span class="line">50</span><br><span class="line">51</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">//可以在编辑器里实时预览效果</span></span><br><span class="line">[<span class="meta">ExecuteInEditMode</span>]</span><br><span class="line"><span class="keyword">public</span> <span class="keyword">class</span> <span class="title">CameraEffect</span> : <span class="title">MonoBehaviour</span></span><br><span class="line">&#123;</span><br><span class="line">	<span class="comment">//用于特效处理的Shader</span></span><br><span class="line">	<span class="keyword">public</span> Shader curShader;</span><br><span class="line">	<span class="comment">//摄像机纹理材质</span></span><br><span class="line">	<span class="keyword">private</span> Material curMaterial;</span><br><span class="line">	<span class="keyword">public</span> Material material &#123;</span><br><span class="line">		<span class="keyword">get</span> &#123;</span><br><span class="line">			<span class="keyword">if</span> (curMaterial == <span class="literal">null</span>) &#123;</span><br><span class="line">				curMaterial = <span class="keyword">new</span> Material (curShader);</span><br><span class="line">				curMaterial.hideFlags = HideFlags.HideAndDontSave;</span><br><span class="line">			&#125;</span><br><span class="line">			<span class="keyword">return</span> curMaterial;</span><br><span class="line">		&#125;</span><br><span class="line">	&#125;</span><br><span class="line"></span><br><span class="line">	<span class="comment">//在目标平台特效是否支持</span></span><br><span class="line">	<span class="function"><span class="keyword">void</span> <span class="title">Start</span> (<span class="params"></span>)</span></span><br><span class="line"><span class="function"></span>	&#123;</span><br><span class="line">		<span class="keyword">if</span> (SystemInfo.supportsImageEffects == <span class="literal">false</span>) &#123;</span><br><span class="line">			enabled = <span class="literal">false</span>;</span><br><span class="line">			<span class="keyword">return</span>;</span><br><span class="line">		&#125;</span><br><span class="line"></span><br><span class="line">		<span class="keyword">if</span> (curShader != <span class="literal">null</span> &amp;&amp; curShader.isSupported == <span class="literal">false</span>) &#123;</span><br><span class="line">			enabled = <span class="literal">false</span>;</span><br><span class="line">		&#125;</span><br><span class="line">	&#125;</span><br><span class="line"></span><br><span class="line">	<span class="function"><span class="keyword">void</span> <span class="title">OnRenderImage</span> (<span class="params">RenderTexture sourceTexture, RenderTexture destTexture</span>)</span></span><br><span class="line"><span class="function"></span>	&#123;</span><br><span class="line">		<span class="keyword">if</span> (blurShader != <span class="literal">null</span>) &#123;</span><br><span class="line">			<span class="comment">//Shader传参</span></span><br><span class="line">			material.SetFloat (<span class="string">"_Property"</span>, propertyValue);</span><br><span class="line">			<span class="comment">//输出到屏幕</span></span><br><span class="line">			Graphics.Blit (sourceTexture, destTexture, material);</span><br><span class="line">		&#125; <span class="keyword">else</span> &#123;</span><br><span class="line">			Graphics.Blit (sourceTexture, destTexture);</span><br><span class="line">		&#125;</span><br><span class="line">	&#125;</span><br><span class="line"></span><br><span class="line"></span><br><span class="line">	<span class="function"><span class="keyword">void</span> <span class="title">OnDisable</span> (<span class="params"></span>)</span></span><br><span class="line"><span class="function"></span>	&#123;</span><br><span class="line">		<span class="keyword">if</span> (curMaterial != <span class="literal">null</span>) &#123;</span><br><span class="line">			DestroyImmediate (curMaterial);</span><br><span class="line">		&#125;</span><br><span class="line">	&#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure></p>
+<p>将上面的代码挂在相机上,我们即可对特效Shader进行处理，通过<code>material.SetFloat (&quot;_Property&quot;, propertyValue)</code>传参即可修改Shader属性</p>
+<h3 id="三、实例效果"><a href="#三、实例效果" class="headerlink" title="三、实例效果"></a>三、实例效果</h3><h4 id="1-饱和度"><a href="#1-饱和度" class="headerlink" title="1. 饱和度"></a>1. 饱和度</h4><p><img src="Shader-BSC.jpg" alt="饱和度"></p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br><span class="line">45</span><br><span class="line">46</span><br><span class="line">47</span><br><span class="line">48</span><br><span class="line">49</span><br><span class="line">50</span><br></pre></td><td class="code"><pre><span class="line">Shader &quot;Wonderm/BSC_Effect&quot; &#123;</span><br><span class="line">	Properties</span><br><span class="line">	&#123;</span><br><span class="line">		_BaseTex(&quot;Base(RGB)&quot;, 2D) = &quot;white&quot; &#123;&#125;</span><br><span class="line">		_Table(&quot;Table&quot;, Vector) = (0.3, 0.59, 0.11,0)</span><br><span class="line">		_Saturation(&quot;Saturation&quot;, range(0.0,1.0)) = 1.0</span><br><span class="line">		_Brightness(&quot;Brightness&quot;, range(0.0,2.0)) = 1.0 </span><br><span class="line">	&#125;</span><br><span class="line"></span><br><span class="line">	SubShader</span><br><span class="line">	&#123;</span><br><span class="line">		Pass</span><br><span class="line">		&#123;</span><br><span class="line">			CGPROGRAM</span><br><span class="line">			#pragma vertex vert_image</span><br><span class="line">			#pragma fragment frag</span><br><span class="line">			#include &quot;UnityCG.cginc&quot;</span><br><span class="line"></span><br><span class="line">			float3 _Table;</span><br><span class="line">			float _Saturation;</span><br><span class="line">			float _Brightness;</span><br><span class="line">			sampler2D _BaseTex;</span><br><span class="line">			float4 _BaseTex_ST;</span><br><span class="line"></span><br><span class="line">			struct v2b</span><br><span class="line">			&#123;</span><br><span class="line">				float4 position:POSITION;</span><br><span class="line">				float2 uv_base:TEXCOORD0;</span><br><span class="line">			&#125;;</span><br><span class="line"></span><br><span class="line">			v2b vert_image(appdata_base input)</span><br><span class="line">			&#123;</span><br><span class="line">				v2b output; </span><br><span class="line">				output.position = mul(UNITY_MATRIX_MVP,input.vertex);</span><br><span class="line">				output.uv_base = TRANSFORM_TEX(input.texcoord, _BaseTex);</span><br><span class="line">				return output;</span><br><span class="line">			&#125;</span><br><span class="line">			 </span><br><span class="line">			float4 frag(v2b input):COLOR</span><br><span class="line">			&#123; </span><br><span class="line">				float3 rgb = tex2D(_BaseTex, input.uv_base);</span><br><span class="line">				float4 cc = lerp(float4(dot(rgb, _Table)),rgb,_Saturation);</span><br><span class="line">				cc *= _Brightness;</span><br><span class="line">				return cc;</span><br><span class="line">			&#125;</span><br><span class="line">			ENDCG</span><br><span class="line">		&#125;</span><br><span class="line">	&#125;</span><br><span class="line">	FallBack &quot;Diffuse&quot;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<h4 id="2-像素化"><a href="#2-像素化" class="headerlink" title="2. 像素化"></a>2. 像素化</h4><p><img src="Shader-Pixel.jpg" alt="像素化"></p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br></pre></td><td class="code"><pre><span class="line">Shader &quot;Wonderm/Mosaic&quot; &#123;</span><br><span class="line">	 Properties</span><br><span class="line">    &#123;</span><br><span class="line">        _MainTex 	(&quot;Main Texture&quot;, 2D) = &quot;&quot; &#123;&#125;</span><br><span class="line">        _AlbumTex 	(&quot;Album Texture&quot;, 2D) = &quot;&quot; &#123;&#125;</span><br><span class="line">        _Rows (&quot;Rows&quot;,int) = 2</span><br><span class="line">        _Lines (&quot;Lines &quot;,int) = 2</span><br><span class="line">        _LutTex (&quot;Lut Texture&quot;, 2D) = &quot;&quot; &#123;&#125;</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    CGINCLUDE</span><br><span class="line"></span><br><span class="line">    #include &quot;UnityCG.cginc&quot;</span><br><span class="line"></span><br><span class="line">    sampler2D _MainTex;</span><br><span class="line">    float4 _MainTex_TexelSize;</span><br><span class="line">    float _BlockSize;</span><br><span class="line">    int _Rows;</span><br><span class="line">    int _Lines;</span><br><span class="line">    sampler2D _AlbumTex;</span><br><span class="line">    sampler2D _LutTex;</span><br><span class="line"></span><br><span class="line">    half4 frag(v2f_img i) : SV_Target</span><br><span class="line">    &#123;</span><br><span class="line">        float2 block = _MainTex_TexelSize.xy * _BlockSize;</span><br><span class="line">        float2 uv1 = trunc(i.uv / block) * block;</span><br><span class="line">        half4 src = tex2D(_MainTex, uv1);</span><br><span class="line">        return src;</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    ENDCG</span><br><span class="line"></span><br><span class="line">    SubShader</span><br><span class="line">    &#123;</span><br><span class="line">        Pass</span><br><span class="line">        &#123;</span><br><span class="line">            ZTest Always Cull Off ZWrite Off</span><br><span class="line">            CGPROGRAM</span><br><span class="line">            #pragma vertex vert_img</span><br><span class="line">            #pragma fragment frag</span><br><span class="line">            ENDCG</span><br><span class="line">        &#125;</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<h4 id="2-高斯模糊-毛玻璃"><a href="#2-高斯模糊-毛玻璃" class="headerlink" title="2. 高斯模糊(毛玻璃)"></a>2. 高斯模糊(毛玻璃)</h4><p>下面的代码是百度的，出处不记得了，但是挺好用的<br><img src="Shader-Blur.jpg" alt="毛玻璃"><br><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br><span class="line">45</span><br><span class="line">46</span><br><span class="line">47</span><br><span class="line">48</span><br><span class="line">49</span><br><span class="line">50</span><br><span class="line">51</span><br><span class="line">52</span><br><span class="line">53</span><br><span class="line">54</span><br><span class="line">55</span><br><span class="line">56</span><br><span class="line">57</span><br><span class="line">58</span><br><span class="line">59</span><br><span class="line">60</span><br><span class="line">61</span><br><span class="line">62</span><br><span class="line">63</span><br><span class="line">64</span><br><span class="line">65</span><br><span class="line">66</span><br><span class="line">67</span><br><span class="line">68</span><br><span class="line">69</span><br><span class="line">70</span><br><span class="line">71</span><br><span class="line">72</span><br><span class="line">73</span><br><span class="line">74</span><br><span class="line">75</span><br><span class="line">76</span><br><span class="line">77</span><br><span class="line">78</span><br><span class="line">79</span><br><span class="line">80</span><br><span class="line">81</span><br><span class="line">82</span><br><span class="line">83</span><br><span class="line">84</span><br><span class="line">85</span><br><span class="line">86</span><br><span class="line">87</span><br><span class="line">88</span><br><span class="line">89</span><br><span class="line">90</span><br><span class="line">91</span><br><span class="line">92</span><br><span class="line">93</span><br><span class="line">94</span><br><span class="line">95</span><br><span class="line">96</span><br><span class="line">97</span><br><span class="line">98</span><br><span class="line">99</span><br><span class="line">100</span><br></pre></td><td class="code"><pre><span class="line">Shader &quot;Custom/WaterBlur&quot; &#123;</span><br><span class="line">Properties &#123;</span><br><span class="line">	_blurSizeXY(&quot;BlurSizeXY&quot;, Range(0,10000)) = 8</span><br><span class="line">&#125;</span><br><span class="line">SubShader &#123;</span><br><span class="line"></span><br><span class="line">// Draw ourselves after all opaque geometry</span><br><span class="line">Tags &#123; &quot;Queue&quot; = &quot;Transparent&quot; &#125;</span><br><span class="line"></span><br><span class="line">// Grab the screen behind the object into _GrabTexture</span><br><span class="line">GrabPass &#123; &#125;</span><br><span class="line"></span><br><span class="line">// Render the object with the texture generated above</span><br><span class="line">Pass &#123;</span><br><span class="line"></span><br><span class="line">CGPROGRAM</span><br><span class="line">#pragma debug</span><br><span class="line">#pragma vertex vert</span><br><span class="line">#pragma fragment frag</span><br><span class="line">#pragma target 3.0</span><br><span class="line"></span><br><span class="line">sampler2D _GrabTexture : register(s0);</span><br><span class="line">float _blurSizeXY;</span><br><span class="line"></span><br><span class="line">struct data &#123;</span><br><span class="line"></span><br><span class="line">float4 vertex : POSITION;</span><br><span class="line"></span><br><span class="line">float3 normal : NORMAL;</span><br><span class="line"></span><br><span class="line">&#125;;</span><br><span class="line"></span><br><span class="line">struct v2f &#123;</span><br><span class="line"></span><br><span class="line">float4 position : POSITION;</span><br><span class="line"></span><br><span class="line">float4 screenPos : TEXCOORD0;</span><br><span class="line"></span><br><span class="line">&#125;;</span><br><span class="line"></span><br><span class="line">v2f vert(data i)&#123;</span><br><span class="line"></span><br><span class="line">v2f o;</span><br><span class="line"></span><br><span class="line">o.position = mul(UNITY_MATRIX_MVP, i.vertex);</span><br><span class="line"></span><br><span class="line">o.screenPos = o.position;</span><br><span class="line"></span><br><span class="line">return o;</span><br><span class="line"></span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line">half4 frag( v2f i ) : COLOR</span><br><span class="line"></span><br><span class="line">&#123;</span><br><span class="line"></span><br><span class="line">float2 screenPos = i.screenPos.xy / i.screenPos.w;</span><br><span class="line">float depth= _blurSizeXY*0.0005;</span><br><span class="line"></span><br><span class="line">screenPos.x = (screenPos.x + 1) * 0.5;</span><br><span class="line"></span><br><span class="line">screenPos.y = (screenPos.y + 1) * 0.5;</span><br><span class="line"></span><br><span class="line">half4 sum = half4(0.0h,0.0h,0.0h,0.0h);</span><br><span class="line">sum += tex2D( _GrabTexture, float2(screenPos.x-5.0 * depth, screenPos.y+5.0 * depth)) * 0.025;</span><br><span class="line">sum += tex2D( _GrabTexture, float2(screenPos.x+5.0 * depth, screenPos.y-5.0 * depth)) * 0.025;</span><br><span class="line"></span><br><span class="line">sum += tex2D( _GrabTexture, float2(screenPos.x-4.0 * depth, screenPos.y+4.0 * depth)) * 0.05;</span><br><span class="line">sum += tex2D( _GrabTexture, float2(screenPos.x+4.0 * depth, screenPos.y-4.0 * depth)) * 0.05;</span><br><span class="line"></span><br><span class="line">sum += tex2D( _GrabTexture, float2(screenPos.x-3.0 * depth, screenPos.y+3.0 * depth)) * 0.09;</span><br><span class="line">sum += tex2D( _GrabTexture, float2(screenPos.x+3.0 * depth, screenPos.y-3.0 * depth)) * 0.09;</span><br><span class="line"></span><br><span class="line">sum += tex2D( _GrabTexture, float2(screenPos.x-2.0 * depth, screenPos.y+2.0 * depth)) * 0.12;</span><br><span class="line">sum += tex2D( _GrabTexture, float2(screenPos.x+2.0 * depth, screenPos.y-2.0 * depth)) * 0.12;</span><br><span class="line"></span><br><span class="line">sum += tex2D( _GrabTexture, float2(screenPos.x-1.0 * depth, screenPos.y+1.0 * depth)) * 0.15;</span><br><span class="line">sum += tex2D( _GrabTexture, float2(screenPos.x+1.0 * depth, screenPos.y-1.0 * depth)) * 0.15;</span><br><span class="line"></span><br><span class="line">sum += tex2D( _GrabTexture, screenPos-5.0 * depth) * 0.025;</span><br><span class="line">sum += tex2D( _GrabTexture, screenPos-4.0 * depth) * 0.05;</span><br><span class="line">sum += tex2D( _GrabTexture, screenPos-3.0 * depth) * 0.09;</span><br><span class="line">sum += tex2D( _GrabTexture, screenPos-2.0 * depth) * 0.12;</span><br><span class="line">sum += tex2D( _GrabTexture, screenPos-1.0 * depth) * 0.15;</span><br><span class="line">sum += tex2D( _GrabTexture, screenPos) * 0.16;</span><br><span class="line">sum += tex2D( _GrabTexture, screenPos+5.0 * depth) * 0.15;</span><br><span class="line">sum += tex2D( _GrabTexture, screenPos+4.0 * depth) * 0.12;</span><br><span class="line">sum += tex2D( _GrabTexture, screenPos+3.0 * depth) * 0.09;</span><br><span class="line">sum += tex2D( _GrabTexture, screenPos+2.0 * depth) * 0.05;</span><br><span class="line">sum += tex2D( _GrabTexture, screenPos+1.0 * depth) * 0.025;</span><br><span class="line"></span><br><span class="line">return sum/2;</span><br><span class="line"></span><br><span class="line">&#125;</span><br><span class="line">ENDCG</span><br><span class="line">&#125;</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line">Fallback Off</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure></p>
+<h3 id="四、-内置CG函数"><a href="#四、-内置CG函数" class="headerlink" title="四、 内置CG函数"></a>四、 内置CG函数</h3><p>有时我们需要多个特效叠加，但是又希望区分多个Shader脚本，这时候我们可以把核心算法提出来，做为单独的方法供一个集合Shader进行调用，我们将其写入cginc文件，然后就可以通过include进行引用</p>
+<p>比如我们将之前的饱和度处理单独提取出来写入<code>ScreenEffect.cginc</code>文件<br><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br></pre></td><td class="code"><pre><span class="line">#ifndef SCREEN_EFFECT</span><br><span class="line">#define SCREEN_EFFECT</span><br><span class="line"> </span><br><span class="line">			//灰度控制</span><br><span class="line">			//_LuminosityAmount = 灰度</span><br><span class="line">			//renderTex = 输入图像</span><br><span class="line">			fixed4 GrayScale(fixed _LuminosityAmount,fixed4 renderTex) : COLOR</span><br><span class="line">			&#123;</span><br><span class="line">				float luminosity = 0.299 * renderTex.r + 0.587 * renderTex.g + 0.114 * renderTex.b;</span><br><span class="line">				fixed4 finalColor = lerp(renderTex, luminosity, _LuminosityAmount);</span><br><span class="line">				</span><br><span class="line">				return finalColor;</span><br><span class="line">			&#125;</span><br><span class="line"></span><br><span class="line">			//模糊</span><br><span class="line"></span><br><span class="line"></span><br><span class="line">#endif</span><br></pre></td></tr></table></figure></p>
+<p>然后在集合Shader中调用其方法<br><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br></pre></td><td class="code"><pre><span class="line">Shader &quot;Custom/CameraEffect&quot; &#123;</span><br><span class="line">	Properties &#123;</span><br><span class="line">		_MainTex (&quot;Base (RGB)&quot;, 2D) = &quot;white&quot; &#123;&#125;</span><br><span class="line">		_LuminosityAmount (&quot;GrayScale Amount&quot;, Range(0.0, 1.0)) = 1.0</span><br><span class="line">	&#125;</span><br><span class="line">	SubShader &#123;</span><br><span class="line">		Pass &#123;</span><br><span class="line">			CGPROGRAM</span><br><span class="line">			#pragma vertex vert_img</span><br><span class="line">			#pragma fragment frag</span><br><span class="line">			</span><br><span class="line">			#include &quot;UnityCG.cginc&quot;</span><br><span class="line">			#include &quot;CGinc/ScreenEffect.cginc&quot;</span><br><span class="line">			</span><br><span class="line">			uniform sampler2D _MainTex;</span><br><span class="line">			fixed _LuminosityAmount;</span><br><span class="line">			</span><br><span class="line">			fixed4 frag(v2f_img i) : COLOR</span><br><span class="line">			&#123;</span><br><span class="line">				//from the v2f_img struct</span><br><span class="line">				fixed4 renderTex = tex2D(_MainTex, i.uv);</span><br><span class="line">				renderTex =GrayScale( _LuminosityAmount, renderTex);</span><br><span class="line">				 </span><br><span class="line">				</span><br><span class="line">				return renderTex;</span><br><span class="line">			&#125;</span><br><span class="line">			</span><br><span class="line">			ENDCG</span><br><span class="line">		&#125;</span><br><span class="line">	&#125;</span><br><span class="line">	FallBack &quot;Diffuse&quot;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure></p>
+<p>这样在叠加特效时，更加方便和快捷</p>
+<h3 id="五、特效叠加"><a href="#五、特效叠加" class="headerlink" title="五、特效叠加"></a>五、特效叠加</h3><p>虽然上面的方法让叠加特效变得很方便，但有时我们又有其他需求<br>比如《古墓丽影》、《蝙蝠侠》、《杀手47》中都有特殊视野，先对屏幕进行灰化处理，然后特殊对象高亮，遮挡描边，这样我们必须区分出所绘制的对象</p>
+<p>此时我们可以在代码中动态添加新的相机，把需要特效的放入对应的层里，每个相机进行相应的处理</p>
+<p>分层相机的话，除了主相机，其他相机要尽量少的渲染物体，以此来减少计算的负荷，因为我们的处理是每帧都在进行的，所以 最好是大量的批次可分层的采用此种方式，其他的尽可动态修改单个物体的shader来最大化减少计算量</p>
+<p>下面是三个特效叠加之后的效果</p>
+<p>特效前<br><img src="Shader-none.jpeg" alt="特效前"><br>特效后，背景灰化，地板马赛克，前景模糊<br><img src="Shader-Effects.jpeg" alt></p>
+
+      
+    </div>
+
+    
+
+    
+    
+    
+
+    
+
+    
+      
+    
+    
+
+    
+
+    <footer class="post-footer">
+      
+        <div class="post-tags">
+          
+            <a href="/tags/Shader/" rel="tag"># Shader</a>
+          
+            <a href="/tags/Image-Effect/" rel="tag"># Image Effect</a>
+          
+        </div>
+      
+
+      
+      
+      
+
+      
+        <div class="post-nav">
+          <div class="post-nav-next post-nav-item">
+            
+              <a href="/2015/09/27/CSharp-DbMngr-CSV/" rel="next" title="C#解析CSV映射实体类列表">
+                <i class="fa fa-chevron-left"></i> C#解析CSV映射实体类列表
+              </a>
+            
+          </div>
+
+          <span class="post-nav-divider"></span>
+
+          <div class="post-nav-prev post-nav-item">
+            
+              <a href="/2015/10/23/Unity-Capture-ScreenShoot/" rel="prev" title="Unity 截屏的两种方式">
+                Unity 截屏的两种方式 <i class="fa fa-chevron-right"></i>
+              </a>
+            
+          </div>
+        </div>
+      
+
+      
+      
+    </footer>
+  </div>
+  
+  
+  
+  </article>
+
+
+  </div>
+
+
+          </div>
+          
+
+  
+
+
+
+        </div>
+        
+          
+  
+  <div class="sidebar-toggle">
+    <div class="sidebar-toggle-line-wrap">
+      <span class="sidebar-toggle-line sidebar-toggle-line-first"></span>
+      <span class="sidebar-toggle-line sidebar-toggle-line-middle"></span>
+      <span class="sidebar-toggle-line sidebar-toggle-line-last"></span>
+    </div>
+  </div>
+
+  <aside id="sidebar" class="sidebar">
+    <div class="sidebar-inner">
+
+      
+
+      
+        <ul class="sidebar-nav motion-element">
+          <li class="sidebar-nav-toc sidebar-nav-active" data-target="post-toc-wrap">
+            文章目录
+          </li>
+          <li class="sidebar-nav-overview" data-target="site-overview-wrap">
+            站点概览
+          </li>
+        </ul>
+      
+
+      <div class="site-overview-wrap sidebar-panel">
+        <div class="site-overview">
+          <div class="site-author motion-element" itemprop="author" itemscope itemtype="http://schema.org/Person">
+            
+              <img class="site-author-image" itemprop="image" src="/uploads/Avatar.jpg" alt="白昼">
+            
+              <p class="site-author-name" itemprop="name">白昼</p>
+              <p class="site-description motion-element" itemprop="description">wonderm-swift@hotmail.com</p>
+          </div>
+
+          
+            <nav class="site-state motion-element">
+              
+                <div class="site-state-item site-state-posts">
+                
+                  <a href="/archives/">
+                
+                    <span class="site-state-item-count">48</span>
+                    <span class="site-state-item-name">日志</span>
+                  </a>
+                </div>
+              
+
+              
+                
+                
+                <div class="site-state-item site-state-categories">
+                  <a href="/categories/index.html">
+                    
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                    <span class="site-state-item-count">10</span>
+                    <span class="site-state-item-name">分类</span>
+                  </a>
+                </div>
+              
+
+              
+                
+                
+                <div class="site-state-item site-state-tags">
+                  <a href="/tags/index.html">
+                    
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                    <span class="site-state-item-count">23</span>
+                    <span class="site-state-item-name">标签</span>
+                  </a>
+                </div>
+              
+            </nav>
+          
+
+          
+
+          
+
+          
+
+          
+          
+            <div class="links-of-blogroll motion-element links-of-blogroll-block">
+              <div class="links-of-blogroll-title">
+                <i class="fa  fa-fw fa-link"></i>
+                友链
+              </div>
+              <ul class="links-of-blogroll-list">
+                
+                  <li class="links-of-blogroll-item">
+                    <a href="http://www.gamemaker.cn/" title="http://www.gamemaker.cn/" rel="noopener" target="_blank">GameMaker</a>
+                  </li>
+                
+                  <li class="links-of-blogroll-item">
+                    <a href="http://www.magecorn.com/" title="http://www.magecorn.com/" rel="noopener" target="_blank">傲娇玉米站</a>
+                  </li>
+                
+                  <li class="links-of-blogroll-item">
+                    <a href="http://soragame.com/" title="http://soragame.com/" rel="noopener" target="_blank">波导Lucario</a>
+                  </li>
+                
+                  <li class="links-of-blogroll-item">
+                    <a href="http://deciia.wang/" title="http://deciia.wang/" rel="noopener" target="_blank">未来印象</a>
+                  </li>
+                
+                  <li class="links-of-blogroll-item">
+                    <a href="http://www.tuoyitian.com/" title="http://www.tuoyitian.com/" rel="noopener" target="_blank">鸵翼天游戏</a>
+                  </li>
+                
+              </ul>
+            </div>
+          
+
+          
+            
+          
+          
+
+        </div>
+      </div>
+
+      
+      <!--noindex-->
+        <div class="post-toc-wrap motion-element sidebar-panel sidebar-panel-active">
+          <div class="post-toc">
+
+            
+            
+            
+            
+
+            
+              <div class="post-toc-content"><ol class="nav"><li class="nav-item nav-level-3"><a class="nav-link" href="#一、后期特效"><span class="nav-number">1.</span> <span class="nav-text">一、后期特效</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#二、结构代码"><span class="nav-number">2.</span> <span class="nav-text">二、结构代码</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#三、实例效果"><span class="nav-number">3.</span> <span class="nav-text">三、实例效果</span></a><ol class="nav-child"><li class="nav-item nav-level-4"><a class="nav-link" href="#1-饱和度"><span class="nav-number">3.1.</span> <span class="nav-text">1. 饱和度</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#2-像素化"><span class="nav-number">3.2.</span> <span class="nav-text">2. 像素化</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#2-高斯模糊-毛玻璃"><span class="nav-number">3.3.</span> <span class="nav-text">2. 高斯模糊(毛玻璃)</span></a></li></ol></li><li class="nav-item nav-level-3"><a class="nav-link" href="#四、-内置CG函数"><span class="nav-number">4.</span> <span class="nav-text">四、 内置CG函数</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#五、特效叠加"><span class="nav-number">5.</span> <span class="nav-text">五、特效叠加</span></a></li></ol></div>
+            
+
+          </div>
+        </div>
+      <!--/noindex-->
+      
+
+      
+
+    </div>
+  </aside>
+  
+
+
+        
+      </div>
+    </main>
+
+    <footer id="footer" class="footer">
+      <div class="footer-inner">
+        <div class="copyright">&copy; 2014 – <span itemprop="copyrightYear">2019</span>
+  <span class="with-love" id="animate">
+    <i class="fa fa-user"></i>
+  </span>
+  <span class="author" itemprop="copyrightHolder"><a href="mailto:wonderm-swift@hotmail.com?subject=发给白昼的邮件" target="_self">@白昼</a></span>
+
+  
+
+  
+</div>
+
+
+  <div class="powered-by">由 <a href="https://hexo.io" class="theme-link" rel="noopener" target="_blank">Hexo</a> 强力驱动 v3.8.0</div>
+
+
+
+  <span class="post-meta-divider">|</span>
+
+
+
+  <div class="theme-info">主题 – <a href="https://theme-next.org" class="theme-link" rel="noopener" target="_blank">NexT.Mist</a> v7.0.1</div>
+
+
+
+
+        
+
+
+
+
+
+
+
+
+        
+      </div>
+    </footer>
+
+    
+      <div class="back-to-top">
+        <i class="fa fa-arrow-up"></i>
+        
+      </div>
+    
+
+    
+
+    
+
+    
+  </div>
+
+  
+
+<script>
+  if (Object.prototype.toString.call(window.Promise) !== '[object Function]') {
+    window.Promise = null;
+  }
+</script>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+  
+  <script src="/lib/jquery/index.js?v=2.1.3"></script>
+
+  
+  <script src="/lib/velocity/velocity.min.js?v=1.2.1"></script>
+
+  
+  <script src="/lib/velocity/velocity.ui.min.js?v=1.2.1"></script>
+
+
+  
+
+
+  <script src="/js/src/utils.js?v=7.0.1"></script>
+
+  <script src="/js/src/motion.js?v=7.0.1"></script>
+
+
+
+  
+  
+
+
+  <script src="/js/src/schemes/muse.js?v=7.0.1"></script>
+
+
+
+
+  
+  <script src="/js/src/scrollspy.js?v=7.0.1"></script>
+<script src="/js/src/post-details.js?v=7.0.1"></script>
+
+
+
+  
+
+
+  <script src="/js/src/bootstrap.js?v=7.0.1"></script>
+
+
+  
+  
+
+
+  
+
+
+  
+  <script>
+    // Popup Window;
+    var isfetched = false;
+    var isXml = true;
+    // Search DB path;
+    var search_path = "search.xml";
+    if (search_path.length === 0) {
+      search_path = "search.xml";
+    } else if (/json$/i.test(search_path)) {
+      isXml = false;
+    }
+    var path = "/" + search_path;
+    // monitor main search box;
+
+    var onPopupClose = function (e) {
+      $('.popup').hide();
+      $('#local-search-input').val('');
+      $('.search-result-list').remove();
+      $('#no-result').remove();
+      $(".local-search-pop-overlay").remove();
+      $('body').css('overflow', '');
+    }
+
+    function proceedsearch() {
+      $("body")
+        .append('<div class="search-popup-overlay local-search-pop-overlay"></div>')
+        .css('overflow', 'hidden');
+      $('.search-popup-overlay').click(onPopupClose);
+      $('.popup').toggle();
+      var $localSearchInput = $('#local-search-input');
+      $localSearchInput.attr("autocapitalize", "none");
+      $localSearchInput.attr("autocorrect", "off");
+      $localSearchInput.focus();
+    }
+
+    // search function;
+    var searchFunc = function(path, search_id, content_id) {
+      'use strict';
+
+      // start loading animation
+      $("body")
+        .append('<div class="search-popup-overlay local-search-pop-overlay">' +
+          '<div id="search-loading-icon">' +
+          '<i class="fa fa-spinner fa-pulse fa-5x fa-fw"></i>' +
+          '</div>' +
+          '</div>')
+        .css('overflow', 'hidden');
+      $("#search-loading-icon").css('margin', '20% auto 0 auto').css('text-align', 'center');
+
+      
+
+      $.ajax({
+        url: path,
+        dataType: isXml ? "xml" : "json",
+        async: true,
+        success: function(res) {
+          // get the contents from search data
+          isfetched = true;
+          $('.popup').detach().appendTo('.header-inner');
+          var datas = isXml ? $("entry", res).map(function() {
+            return {
+              title: $("title", this).text(),
+              content: $("content",this).text(),
+              url: $("url" , this).text()
+            };
+          }).get() : res;
+          var input = document.getElementById(search_id);
+          var resultContent = document.getElementById(content_id);
+          var inputEventFunction = function() {
+            var searchText = input.value.trim().toLowerCase();
+            var keywords = searchText.split(/[\s\-]+/);
+            if (keywords.length > 1) {
+              keywords.push(searchText);
+            }
+            var resultItems = [];
+            if (searchText.length > 0) {
+              // perform local searching
+              datas.forEach(function(data) {
+                var isMatch = false;
+                var hitCount = 0;
+                var searchTextCount = 0;
+                var title = data.title.trim();
+                var titleInLowerCase = title.toLowerCase();
+                var content = data.content.trim().replace(/<[^>]+>/g,"");
+                
+                var contentInLowerCase = content.toLowerCase();
+                var articleUrl = decodeURIComponent(data.url).replace(/\/{2,}/g, '/');
+                var indexOfTitle = [];
+                var indexOfContent = [];
+                // only match articles with not empty titles
+                if(title != '') {
+                  keywords.forEach(function(keyword) {
+                    function getIndexByWord(word, text, caseSensitive) {
+                      var wordLen = word.length;
+                      if (wordLen === 0) {
+                        return [];
+                      }
+                      var startPosition = 0, position = [], index = [];
+                      if (!caseSensitive) {
+                        text = text.toLowerCase();
+                        word = word.toLowerCase();
+                      }
+                      while ((position = text.indexOf(word, startPosition)) > -1) {
+                        index.push({position: position, word: word});
+                        startPosition = position + wordLen;
+                      }
+                      return index;
+                    }
+
+                    indexOfTitle = indexOfTitle.concat(getIndexByWord(keyword, titleInLowerCase, false));
+                    indexOfContent = indexOfContent.concat(getIndexByWord(keyword, contentInLowerCase, false));
+                  });
+                  if (indexOfTitle.length > 0 || indexOfContent.length > 0) {
+                    isMatch = true;
+                    hitCount = indexOfTitle.length + indexOfContent.length;
+                  }
+                }
+
+                // show search results
+
+                if (isMatch) {
+                  // sort index by position of keyword
+
+                  [indexOfTitle, indexOfContent].forEach(function (index) {
+                    index.sort(function (itemLeft, itemRight) {
+                      if (itemRight.position !== itemLeft.position) {
+                        return itemRight.position - itemLeft.position;
+                      } else {
+                        return itemLeft.word.length - itemRight.word.length;
+                      }
+                    });
+                  });
+
+                  // merge hits into slices
+
+                  function mergeIntoSlice(text, start, end, index) {
+                    var item = index[index.length - 1];
+                    var position = item.position;
+                    var word = item.word;
+                    var hits = [];
+                    var searchTextCountInSlice = 0;
+                    while (position + word.length <= end && index.length != 0) {
+                      if (word === searchText) {
+                        searchTextCountInSlice++;
+                      }
+                      hits.push({position: position, length: word.length});
+                      var wordEnd = position + word.length;
+
+                      // move to next position of hit
+
+                      index.pop();
+                      while (index.length != 0) {
+                        item = index[index.length - 1];
+                        position = item.position;
+                        word = item.word;
+                        if (wordEnd > position) {
+                          index.pop();
+                        } else {
+                          break;
+                        }
+                      }
+                    }
+                    searchTextCount += searchTextCountInSlice;
+                    return {
+                      hits: hits,
+                      start: start,
+                      end: end,
+                      searchTextCount: searchTextCountInSlice
+                    };
+                  }
+
+                  var slicesOfTitle = [];
+                  if (indexOfTitle.length != 0) {
+                    slicesOfTitle.push(mergeIntoSlice(title, 0, title.length, indexOfTitle));
+                  }
+
+                  var slicesOfContent = [];
+                  while (indexOfContent.length != 0) {
+                    var item = indexOfContent[indexOfContent.length - 1];
+                    var position = item.position;
+                    var word = item.word;
+                    // cut out 100 characters
+                    var start = position - 20;
+                    var end = position + 80;
+                    if(start < 0){
+                      start = 0;
+                    }
+                    if (end < position + word.length) {
+                      end = position + word.length;
+                    }
+                    if(end > content.length){
+                      end = content.length;
+                    }
+                    slicesOfContent.push(mergeIntoSlice(content, start, end, indexOfContent));
+                  }
+
+                  // sort slices in content by search text's count and hits' count
+
+                  slicesOfContent.sort(function (sliceLeft, sliceRight) {
+                    if (sliceLeft.searchTextCount !== sliceRight.searchTextCount) {
+                      return sliceRight.searchTextCount - sliceLeft.searchTextCount;
+                    } else if (sliceLeft.hits.length !== sliceRight.hits.length) {
+                      return sliceRight.hits.length - sliceLeft.hits.length;
+                    } else {
+                      return sliceLeft.start - sliceRight.start;
+                    }
+                  });
+
+                  // select top N slices in content
+
+                  var upperBound = parseInt('1');
+                  if (upperBound >= 0) {
+                    slicesOfContent = slicesOfContent.slice(0, upperBound);
+                  }
+
+                  // highlight title and content
+
+                  function highlightKeyword(text, slice) {
+                    var result = '';
+                    var prevEnd = slice.start;
+                    slice.hits.forEach(function (hit) {
+                      result += text.substring(prevEnd, hit.position);
+                      var end = hit.position + hit.length;
+                      result += '<b class="search-keyword">' + text.substring(hit.position, end) + '</b>';
+                      prevEnd = end;
+                    });
+                    result += text.substring(prevEnd, slice.end);
+                    return result;
+                  }
+
+                  var resultItem = '';
+
+                  if (slicesOfTitle.length != 0) {
+                    resultItem += "<li><a href='" + articleUrl + "' class='search-result-title'>" + highlightKeyword(title, slicesOfTitle[0]) + "</a>";
+                  } else {
+                    resultItem += "<li><a href='" + articleUrl + "' class='search-result-title'>" + title + "</a>";
+                  }
+
+                  slicesOfContent.forEach(function (slice) {
+                    resultItem += "<a href='" + articleUrl + "'>" +
+                      "<p class=\"search-result\">" + highlightKeyword(content, slice) +
+                      "...</p>" + "</a>";
+                  });
+
+                  resultItem += "</li>";
+                  resultItems.push({
+                    item: resultItem,
+                    searchTextCount: searchTextCount,
+                    hitCount: hitCount,
+                    id: resultItems.length
+                  });
+                }
+              })
+            };
+            if (keywords.length === 1 && keywords[0] === "") {
+              resultContent.innerHTML = '<div id="no-result"><i class="fa fa-search fa-5x"></i></div>'
+            } else if (resultItems.length === 0) {
+              resultContent.innerHTML = '<div id="no-result"><i class="fa fa-frown-o fa-5x"></i></div>'
+            } else {
+              resultItems.sort(function (resultLeft, resultRight) {
+                if (resultLeft.searchTextCount !== resultRight.searchTextCount) {
+                  return resultRight.searchTextCount - resultLeft.searchTextCount;
+                } else if (resultLeft.hitCount !== resultRight.hitCount) {
+                  return resultRight.hitCount - resultLeft.hitCount;
+                } else {
+                  return resultRight.id - resultLeft.id;
+                }
+              });
+              var searchResultList = '<ul class=\"search-result-list\">';
+              resultItems.forEach(function (result) {
+                searchResultList += result.item;
+              })
+              searchResultList += "</ul>";
+              resultContent.innerHTML = searchResultList;
+            }
+          }
+
+          if ('auto' === 'auto') {
+            input.addEventListener('input', inputEventFunction);
+          } else {
+            $('.search-icon').click(inputEventFunction);
+            input.addEventListener('keypress', function (event) {
+              if (event.keyCode === 13) {
+                inputEventFunction();
+              }
+            });
+          }
+
+          // remove loading animation
+          $(".local-search-pop-overlay").remove();
+          $('body').css('overflow', '');
+
+          proceedsearch();
+        }
+      });
+    }
+
+    // handle and trigger popup window;
+    $('.popup-trigger').click(function(e) {
+      e.stopPropagation();
+      if (isfetched === false) {
+        searchFunc(path, 'local-search-input', 'local-search-result');
+      } else {
+        proceedsearch();
+      };
+    });
+
+    $('.popup-btn-close').click(onPopupClose);
+    $('.popup').click(function(e){
+      e.stopPropagation();
+    });
+    $(document).on('keyup', function (event) {
+      var shouldDismissSearchPopup = event.which === 27 &&
+        $('.search-popup').is(':visible');
+      if (shouldDismissSearchPopup) {
+        onPopupClose();
+      }
+    });
+  </script>
+
+
+
+
+
+  
+
+  
+
+  
+
+  
+
+  
+
+  
+
+  
+
+  
+
+  
+
+  
+
+  
+
+  
+
+  
+
+</body>
+</html>
