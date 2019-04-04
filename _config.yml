@@ -85,4 +85,4 @@ deploy:
   #repo: git@git.dev.tencent.com:WondermSwift/WondermBlog.git
   repo: git@github.com:WondermSwift/WondermSwift.github.io.git
   branch: master
-  message: 添加素材来源引用
+  message: 添加日志自定义画板的实现
