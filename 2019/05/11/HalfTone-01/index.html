@@ -99,7 +99,7 @@
   <meta name="description" content="今天在群里看到了一张图，似乎在知乎上看到过叫做半调，于是决定自己思考动手实践下">
 <meta name="keywords" content="Shader,Image Effect">
 <meta property="og:type" content="article">
-<meta property="og:title" content="HalfTone (半调)">
+<meta property="og:title" content="Halftone (半调)">
 <meta property="og:url" content="https://www.wonderm.cc/2019/05/11/HalfTone-01/index.html">
 <meta property="og:site_name" content="白昼">
 <meta property="og:description" content="今天在群里看到了一张图，似乎在知乎上看到过叫做半调，于是决定自己思考动手实践下">
@@ -120,9 +120,17 @@
 <meta property="og:image" content="https://www.wonderm.cc/2019/05/11/HalfTone-01/Example_3_1.jpg">
 <meta property="og:image" content="https://www.wonderm.cc/2019/05/11/HalfTone-01/Example_4_0.jpg">
 <meta property="og:image" content="https://www.wonderm.cc/2019/05/11/HalfTone-01/Example_4_1.jpg">
-<meta property="og:updated_time" content="2019-05-11T14:52:42.478Z">
+<meta property="og:image" content="https://www.wonderm.cc/2019/05/11/HalfTone-01/Pic_01.jpg">
+<meta property="og:image" content="https://www.wonderm.cc/2019/05/11/HalfTone-01/Pic_02.jpg">
+<meta property="og:image" content="https://www.wonderm.cc/2019/05/11/HalfTone-01/Pic_03.jpg">
+<meta property="og:image" content="https://www.wonderm.cc/2019/05/11/HalfTone-01/Pic_04.jpg">
+<meta property="og:image" content="https://www.wonderm.cc/2019/05/11/HalfTone-01/Pic_05.jpg">
+<meta property="og:image" content="https://www.wonderm.cc/2019/05/11/HalfTone-01/Pic_06.jpg">
+<meta property="og:image" content="https://www.wonderm.cc/2019/05/11/HalfTone-01/Pic_07.jpg">
+<meta property="og:image" content="https://www.wonderm.cc/2019/05/11/HalfTone-01/Pic_08.jpg">
+<meta property="og:updated_time" content="2019-05-11T15:17:28.043Z">
 <meta name="twitter:card" content="summary">
-<meta name="twitter:title" content="HalfTone (半调)">
+<meta name="twitter:title" content="Halftone (半调)">
 <meta name="twitter:description" content="今天在群里看到了一张图，似乎在知乎上看到过叫做半调，于是决定自己思考动手实践下">
 <meta name="twitter:image" content="https://www.wonderm.cc/2019/05/11/HalfTone-01/Example.png">
 
@@ -141,7 +149,7 @@
   };
 </script>
 
-  <title>HalfTone (半调) | 白昼</title>
+  <title>Halftone (半调) | 白昼</title>
   
 
 
@@ -386,7 +394,7 @@
 
         
         
-          <h1 class="post-title" itemprop="name headline">HalfTone (半调)
+          <h1 class="post-title" itemprop="name headline">Halftone (半调)
 
               
             
@@ -469,7 +477,7 @@
 <h3 id="参考效果"><a href="#参考效果" class="headerlink" title="参考效果"></a>参考效果</h3><p>参考图</p>
 <p><img src="Example.png" alt="Example"></p>
 <p>效果很常见，可以肯定是后期效果，<a href="https://store.steampowered.com/app/653530/Return_of_the_Obra_Dinn/" target="_blank" rel="noopener">Return of the Obra Dinn</a> 中也有用到，并且提供了非常特殊的美术效果，那么以还原为目标</p>
-<h3 id="最终效果"><a href="#最终效果" class="headerlink" title="最终效果"></a>最终效果</h3><p>图片来自微博上购买的指环王主题明信片<br>一套八张 这是第一张</p>
+<h3 id="最终效果"><a href="#最终效果" class="headerlink" title="最终效果"></a>最终效果</h3><p>图片来自微博上购买的指环王主题明信片<br>一套八张 这是第一张<br>作者 <code>Veronica Hsu</code><br>最后有用到的图片</p>
 <p><img src="Pre.jpg" alt="输入"><br><img src="Final.jpg" alt="输出"></p>
 <h3 id="制作思路"><a href="#制作思路" class="headerlink" title="制作思路"></a>制作思路</h3><p>分析下基本处理流程</p>
 <ol>
@@ -497,6 +505,7 @@
 <h4 id="天空盒剔除"><a href="#天空盒剔除" class="headerlink" title="天空盒剔除"></a>天空盒剔除</h4><p>简单取下深度接近1的 输出白色</p>
 <h4 id="效果"><a href="#效果" class="headerlink" title="效果"></a>效果</h4><p><img src="Example_1_0.jpg" alt="Example_1_0"><br><img src="Example_1_1.jpg" alt="Example_1_1"><br><img src="Example_2_0.jpg" alt="Example_2_0"><br><img src="Example_2_1.jpg" alt="Example_2_1"><br><img src="Example_3_0.jpg" alt="Example_3_0"><br><img src="Example_3_1.jpg" alt="Example_3_1"><br><img src="Example_4_0.jpg" alt="Example_4_0"><br><img src="Example_4_1.jpg" alt="Example_4_1"></p>
 <p>修改参数更换 Mask 可以产生不同的风格</p>
+<h3 id="原图"><a href="#原图" class="headerlink" title="原图"></a>原图</h3><p><img src="Pic_01.jpg" alt="Pic_01"><br><img src="Pic_02.jpg" alt="Pic_02"><br><img src="Pic_03.jpg" alt="Pic_03"><br><img src="Pic_04.jpg" alt="Pic_04"><br><img src="Pic_05.jpg" alt="Pic_05"><br><img src="Pic_06.jpg" alt="Pic_06"><br><img src="Pic_07.jpg" alt="Pic_07"><br><img src="Pic_08.jpg" alt="Pic_08"></p>
 
       
     </div>
@@ -776,7 +785,7 @@
             
 
             
-              <div class="post-toc-content"><ol class="nav"><li class="nav-item nav-level-3"><a class="nav-link" href="#参考效果"><span class="nav-number">1.</span> <span class="nav-text">参考效果</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#最终效果"><span class="nav-number">2.</span> <span class="nav-text">最终效果</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#制作思路"><span class="nav-number">3.</span> <span class="nav-text">制作思路</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#实现步骤"><span class="nav-number">4.</span> <span class="nav-text">实现步骤</span></a><ol class="nav-child"><li class="nav-item nav-level-4"><a class="nav-link" href="#像素化"><span class="nav-number">4.1.</span> <span class="nav-text">像素化</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#灰化"><span class="nav-number">4.2.</span> <span class="nav-text">灰化</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#色阶分离"><span class="nav-number">4.3.</span> <span class="nav-text">色阶分离</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#Dither"><span class="nav-number">4.4.</span> <span class="nav-text">Dither</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#Mask"><span class="nav-number">4.5.</span> <span class="nav-text">Mask</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#天空盒剔除"><span class="nav-number">4.6.</span> <span class="nav-text">天空盒剔除</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#效果"><span class="nav-number">4.7.</span> <span class="nav-text">效果</span></a></li></ol></li></ol></div>
+              <div class="post-toc-content"><ol class="nav"><li class="nav-item nav-level-3"><a class="nav-link" href="#参考效果"><span class="nav-number">1.</span> <span class="nav-text">参考效果</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#最终效果"><span class="nav-number">2.</span> <span class="nav-text">最终效果</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#制作思路"><span class="nav-number">3.</span> <span class="nav-text">制作思路</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#实现步骤"><span class="nav-number">4.</span> <span class="nav-text">实现步骤</span></a><ol class="nav-child"><li class="nav-item nav-level-4"><a class="nav-link" href="#像素化"><span class="nav-number">4.1.</span> <span class="nav-text">像素化</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#灰化"><span class="nav-number">4.2.</span> <span class="nav-text">灰化</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#色阶分离"><span class="nav-number">4.3.</span> <span class="nav-text">色阶分离</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#Dither"><span class="nav-number">4.4.</span> <span class="nav-text">Dither</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#Mask"><span class="nav-number">4.5.</span> <span class="nav-text">Mask</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#天空盒剔除"><span class="nav-number">4.6.</span> <span class="nav-text">天空盒剔除</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#效果"><span class="nav-number">4.7.</span> <span class="nav-text">效果</span></a></li></ol></li><li class="nav-item nav-level-3"><a class="nav-link" href="#原图"><span class="nav-number">5.</span> <span class="nav-text">原图</span></a></li></ol></div>
             
 
           </div>
