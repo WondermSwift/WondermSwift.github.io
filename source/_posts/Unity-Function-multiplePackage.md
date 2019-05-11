@@ -6,13 +6,10 @@ description:
 ---
 
 使用UGUI制作一个物品尺寸不定的背包,要求可通过拖拽或者方向键移动物品位置
+<!--more-->
 效果如下:
 ![图片](Unity-MultipleSizePackage-record.gif)
 ![图片](Unity-MultipleSizePackage-record2.gif)
-
-
-<!--more-->
-具体思路明天再补，滚去睡觉先！
 
 
 核心代码如下：

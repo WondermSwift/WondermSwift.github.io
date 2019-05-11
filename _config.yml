@@ -76,17 +76,6 @@ pagination_dir: page
 ## theme: landscape
 theme: next
 
-# Deployment
-## Docs: https://hexo.io/docs/deployment.html
-deploy:
-  type: git
-  #repo: git@git.coding.net:WondermSwift/BlogPages.git
-  #repo: git@git.coding.net:WondermSwift/WondermBlog.git
-  #repo: git@git.dev.tencent.com:WondermSwift/WondermBlog.git
-  repo: git@github.com:WondermSwift/WondermSwift.github.io.git
-  branch: master
-  message: 添加日志自定义画板的实现
-
 # Security
 ##
 encrypt:
@@ -107,3 +96,15 @@ encrypt:
         <div id="encrypt-blog" style="display:none">
         {{content}}
         </div>
+
+# Deployment
+## Docs: https://hexo.io/docs/deployment.html
+deploy:
+  type: git
+  #repo: git@git.coding.net:WondermSwift/BlogPages.git
+  #repo: git@git.coding.net:WondermSwift/WondermBlog.git
+  #repo: git@git.dev.tencent.com:WondermSwift/WondermBlog.git
+  repo: git@github.com:WondermSwift/WondermSwift.github.io.git
+  branch: master
+  message: 添加日志半调 添加图片
+
