@@ -106,5 +106,5 @@ deploy:
   #repo: git@git.dev.tencent.com:WondermSwift/WondermBlog.git
   repo: git@github.com:WondermSwift/WondermSwift.github.io.git
   branch: master
-  message: 添加大图查看插件
+  message: 补充引用
 

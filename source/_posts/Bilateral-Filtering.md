@@ -85,5 +85,6 @@ k和l是当前像素的索引，i和j是图片上任意一点的像素索引，w
 ### 参考资料
 [QT/C++实现卡通漫画风格化](https://zhuanlan.zhihu.com/p/57729966)
 [三行MATLAB实现动漫风格照片](https://zhuanlan.zhihu.com/p/57768192)
+[【图像处理】——双边滤波](https://blog.csdn.net/u013921430/article/details/84532068)
 [Unity Shader 实现磨皮效果](https://www.jianshu.com/p/90feece27a04)
 [YUCIHighPassSkinSmoothing](https://github.com/YuAo/YUCIHighPassSkinSmoothing)
