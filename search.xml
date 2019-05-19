@@ -1,9 +1,22 @@
 <?xml version="1.0" encoding="utf-8"?>
 <search>
   <entry>
+    <title><![CDATA[美颜滤镜与双边滤波]]></title>
+    <url>%2F2019%2F05%2F19%2FBilateral-Filtering%2F</url>
+    <content type="text"><![CDATA[知乎上看到一篇风格化图像处理的文章，尝试在Unity里实现下 原文链接 QT/C++实现卡通漫画风格化 效果为磨皮加描边，描边将在未来的文章里介绍本篇只介绍磨皮算法 参考效果 双边滤波常见的磨皮算法一般使用双边滤波，对皮肤的部分进行模糊，即对非边缘进行模糊双边滤波采用基于高斯分布的加权平均的方法，同时考虑了像素距离和像素值的差异使得双边滤波在降噪的同时能保留原有边缘 一些基础概念：双边滤波器 公式k和l是当前像素的索引，i和j是图片上任意一点的像素索引，w 为权重转化一下 kl 为采样 uv 的当前偏移，ij 就是 uv 在Unity中实现核心代码12345678910111213141516171819202122232425262728293031323334float3 BilateralFilter(float2 uv)&#123; float d = _Radius; float ss2 = 2 * _SigmaSpace * _SigmaSpace; float sc2 = 2 * _SigmaColor * _SigmaColor; float i = uv.x; float j = uv.y; float weightSum = 0; float3 filterValue = 0; float3 centerCol= tex2D(_MainTex, uv).rgb; for (int k = -d; k &lt;= d; k++) &#123; for (int l = -d; l &lt;= d; l++) &#123; float2 curUV =uv+ _MainTex_TexelSize.xy*float2( k,l); float3 curCol = tex2D(_MainTex, curUV); float value_Square = dot(curCol - centerCol, curCol - centerCol); float distance_Square = distance(curUV, uv)*d; float weight = exp(-1 * (distance_Square / ss2 + value_Square / sc2)); weightSum += weight; filterValue += (weight * curCol); &#125; &#125; filterValue =filterValue / weightSum; return filterValue;&#125; 最终效果通过对权重公式的修改，可以很容易的实现原本想要的卡通的笔触 参考资料QT/C++实现卡通漫画风格化三行MATLAB实现动漫风格照片Unity Shader 实现磨皮效果YUCIHighPassSkinSmoothing]]></content>
+      <categories>
+        <category>Shader</category>
+      </categories>
+      <tags>
+        <tag>Shader</tag>
+        <tag>Image Effect</tag>
+        <tag>Filter</tag>
+      </tags>
+  </entry>
+  <entry>
     <title><![CDATA[Halftone (半调)]]></title>
     <url>%2F2019%2F05%2F11%2FHalfTone-01%2F</url>
-    <content type="text"><![CDATA[今天在群里看到了一张图，似乎在知乎上看到过叫做半调，于是决定自己思考动手实践下 参考效果参考图 效果很常见，可以肯定是后期效果，Return of the Obra Dinn 中也有用到，并且提供了非常特殊的美术效果，那么以还原为目标 最终效果图片来自微博上购买的指环王主题明信片一套八张 这是第一张作者 Veronica Hsu最后有用到的图片 制作思路分析下基本处理流程 像素化 灰化-&gt;深度增强 色阶分离 Dither-&gt;混合 基本都是做过的翻出过去的代码拼凑一番就有效果了 实现步骤像素化之前的代码 Shader 屏幕后期特效-01半径为8 12float2 block = _MainTex_TexelSize.xy * _BlockSize;float2 uv = trunc(i.uv / block) * block; 灰化只是灰化效果不好把三通道加起来求平均然后平方增强对比 12float vall = (col.r + col.g + col.b) / 3;vall = pow(vall, 2); 色阶分离一般这里会使用一张 LookupTex这里由于还不知道什么样的范围比较合适直接手写了, 按照参考图分三级一波参数调节 12float step1 = step(_Step_1, vall);color = lerp(color, _Color_1, 1 - step1); Dither是时候祭出贝尔矩阵了贝尔矩阵和后期模糊实现半透明这次选取8x8的 ，可以看下不同细分的表现如何 123float2 uv2 = i.uv.xy / i.uv.w * _ScreenParams.xy;float dither = ClipByDither8x8(1, uv2/ scale);color = 1 - (1 - color) * dither;; Mask为了风格化， 每个像素点的形状希望可以控制加入 Mask 可以做一些拼接的效果选择 Default-Particle 做个测试由于希望圆形的尺寸一致直接x12 12345float2 uv3 = uv2 / scale;fixed4 mask = tex2D(_MaskTex, uv3 );mask = clamp( mask * 12 ,0,1);mask = lerp(1-dither, mask, mask &gt;= 0);color =1-(1-color)* mask * dither; 天空盒剔除简单取下深度接近1的 输出白色 效果 修改参数更换 Mask 可以产生不同的风格 原图]]></content>
+    <content type="text"><![CDATA[今天在群里看到了一张图，似乎在知乎上看到过叫做半调，于是决定自己思考动手实践下 参考效果参考图 效果很常见，可以肯定是后期效果，Return of the Obra Dinn 中也有用到，并且提供了非常特殊的美术效果，那么以还原为目标 最终效果图片来自微博上购买的指环王主题明信片一套八张 这是第一张, 作者 Veronica Hsu最后有曲阜图片 制作思路分析下基本处理流程 像素化 灰化-&gt;深度增强 色阶分离 Dither-&gt;混合 基本都是做过的翻出过去的代码拼凑一番就有效果了 实现步骤像素化之前的代码 Shader 屏幕后期特效-01半径为8 12float2 block = _MainTex_TexelSize.xy * _BlockSize;float2 uv = trunc(i.uv / block) * block; 灰化只是灰化效果不好把三通道加起来求平均然后平方增强对比 12float vall = (col.r + col.g + col.b) / 3;vall = pow(vall, 2); 色阶分离一般这里会使用一张 LookupTex这里由于还不知道什么样的范围比较合适直接手写了, 按照参考图分三级一波参数调节 12float step1 = step(_Step_1, vall);color = lerp(color, _Color_1, 1 - step1); Dither是时候祭出贝尔矩阵了贝尔矩阵和后期模糊实现半透明这次选取8x8的 ，可以看下不同细分的表现如何 123float2 uv2 = i.uv.xy / i.uv.w * _ScreenParams.xy;float dither = ClipByDither8x8(1, uv2/ scale);color = 1 - (1 - color) * dither;; Mask为了风格化， 每个像素点的形状希望可以控制加入 Mask 可以做一些拼接的效果选择 Default-Particle 做个测试由于希望圆形的尺寸一致直接x12 12345float2 uv3 = uv2 / scale;fixed4 mask = tex2D(_MaskTex, uv3 );mask = clamp( mask * 12 ,0,1);mask = lerp(1-dither, mask, mask &gt;= 0);color =1-(1-color)* mask * dither; 天空盒剔除简单取下深度接近1的 输出白色 效果 修改参数更换 Mask 可以产生不同的风格 原图]]></content>
       <categories>
         <category>Shader</category>
       </categories>
