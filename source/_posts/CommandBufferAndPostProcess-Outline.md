@@ -155,7 +155,7 @@ v2f vert (appdata v)
 #### 获取 CameraTarget
 
 通过 `FrameDebug` 检视一番
-Unity 通过 `Hidden/PostProcessing/CopyStd`将 CameraTarget 渲染到 RT 中
+Unity 通过 `Hidden/PostProcessing/CopyStd` 将 CameraTarget 渲染到 RT 中
 使用的以下方法
 ```
 	context.GetScreenSpaceTemporaryRT(cmd, tempRt, 0, sourceFormat, RenderTextureReadWrite.sRGB);
@@ -164,7 +164,8 @@ Unity 通过 `Hidden/PostProcessing/CopyStd`将 CameraTarget 渲染到 RT 中
 
 `BuiltinBlit` ??? !!!!! FuckUnity
 
-Google 以下得到答案 (How to get screen buffer RenderTargetIdentifier](https://forum.unity.com/threads/how-to-get-screen-buffer-rendertargetidentifier.320410/]
+Google 一下得到答案 
+(How to get screen buffer RenderTargetIdentifier](https://forum.unity.com/threads/how-to-get-screen-buffer-rendertargetidentifier.320410/]
 
 ```
 	int width = cam.pixelWidth;
@@ -233,7 +234,7 @@ Google 以下得到答案 (How to get screen buffer RenderTargetIdentifier](http
 为什么选择自己写，而不是直接给 `PostProcessV2` 写扩展
 
 按照Unity一贯的逻辑，大版本更新和 RP 的切换会导致 PostProcess 的完全改变
-包括资源和 API 的变更，使用 Unity 的不能保证安全的过度
+包括资源和 API 的变更，使用 Unity 的不能保证安全的过渡
 比如 V1 到 V2 的升级基本重写，相同参数结果不一致
 又比如现在的 HDRP 突然自己实现了一套 PostProcess ，且完全不兼容 PostProcessV2
  

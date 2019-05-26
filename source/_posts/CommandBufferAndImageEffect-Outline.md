@@ -14,7 +14,7 @@ description:
 
 <!--more-->
 
-### 效果
+### 效果预览
 ![Preview_1](Final_ScreenEffect_Bloom.png)
 
 ### 描边算法的一般原理
@@ -42,7 +42,7 @@ description:
 #### Edge Detection 图像边缘检测
 
 图像处理中常见的使用 Sobel 算子来进行边缘检测
-高质量的检测一般透过如下三个步骤
+高质量的检测一般通过如下三个步骤
 
 1. Sobel Color
 2. Sobel Depth
@@ -149,7 +149,7 @@ description:
 
 #### 缺陷修复
 
-法线后期效果并没有与 Unity 的 PostProcessV2 叠加
+后期效果并没有与 Unity 的 PostProcessV2 叠加
 `AA` 和 `Bloom` 完全避开了我们的描边
 打开 `FrameDebug` 一探究竟
 
