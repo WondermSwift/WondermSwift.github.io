@@ -106,5 +106,5 @@ deploy:
   #repo: git@git.dev.tencent.com:WondermSwift/WondermBlog.git
   repo: git@github.com:WondermSwift/WondermSwift.github.io.git
   branch: master
-  message: 补充引用
+  message: 添加日志两篇 两种方式实现后处理描边
 
