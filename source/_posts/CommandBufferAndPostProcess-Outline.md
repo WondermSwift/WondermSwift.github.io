@@ -14,6 +14,8 @@ description:
 
 <!--more-->
 
+`CommandBuffer_Outline`
+
 `PostProcessV2` 没有使用相机的后期，先来分析可能的方法
 既然我们可以通过 `CommandBuffer.DrawRenderer` 的方式来绘制用于描边 Mesh
 那么我们在相机前方绘制一个 始终朝向相机的 `Quad` 不就可以了么
