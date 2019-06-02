@@ -87,7 +87,7 @@ GB 结合做出流动效果
 雨滴涟漪的实现很多，参照[Rainy Surface Shader](https://deepspacebanana.github.io/deepspacebanana.github.io/blog/shader/art/unreal%20engine/Rainy-Surface-Shader-Part-1)这篇文章中介绍的一步步迭代
 
 采样贴图的R通道，与时间进行运算得到淡入动画
-再做一次但是UV进行偏移叠加输出，得到没有明显重复感的动画
+UV偏移再做一次叠加输出，得到没有明显重复感的动画
 
 代码如下
 
@@ -154,7 +154,7 @@ fixed Rinple(fixed rinple1, float time) {
 
 ### 再次改进
 
-目前的效果已经达到了我们的预期，但并不难直接放到项目里使用
+目前的效果已经达到了我们的预期，但并不能直接放到项目里使用
 改动成本高，计算量也大，调节不方便
 空间遮罩也不好解决，房檐下不落雨之类实现不方便
 
