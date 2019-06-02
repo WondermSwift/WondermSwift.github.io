@@ -119,7 +119,7 @@
 <meta property="og:image" content="https://www.wonderm.cc/2019/05/26/CommandBufferAndImageEffect-Outline/Final_ScreenEffect_Frame.png">
 <meta property="og:image" content="https://www.wonderm.cc/2019/05/26/CommandBufferAndImageEffect-Outline/Final_ScreenEffect_Bloom.png">
 <meta property="og:image" content="https://www.wonderm.cc/2019/05/26/CommandBufferAndImageEffect-Outline/Final_ScreenEffect.png">
-<meta property="og:updated_time" content="2019-05-26T17:59:32.384Z">
+<meta property="og:updated_time" content="2019-06-02T11:28:25.140Z">
 <meta name="twitter:card" content="summary">
 <meta name="twitter:title" content="CommandBuffer与ImageEffect实践-----Outline">
 <meta name="twitter:description" content="今天来实现上次留下的描边">
@@ -466,6 +466,7 @@
       
         <p>今天来实现上次留下的描边</p>
 <a id="more"></a>
+<p><code>CommandBuffer_Outline</code></p>
 <h3 id="效果预览"><a href="#效果预览" class="headerlink" title="效果预览"></a>效果预览</h3><p><img src="Final_ScreenEffect_Bloom.png" alt="Preview_1"></p>
 <h3 id="描边算法的一般原理"><a href="#描边算法的一般原理" class="headerlink" title="描边算法的一般原理"></a>描边算法的一般原理</h3><h4 id="NdotV-边缘发光"><a href="#NdotV-边缘发光" class="headerlink" title="NdotV 边缘发光"></a>NdotV 边缘发光</h4><p>视线方向与法线方向 dot ，检测边缘<br>适合面数多形状复杂的模型<br>对于硬边的基本几何体如Cube等无解</p>
 <h4 id="Backface-正面剔除"><a href="#Backface-正面剔除" class="headerlink" title="Backface 正面剔除"></a>Backface 正面剔除</h4><p>多加一个 Pass 只渲染背面，将顶点沿法线向外挤出<br>是最普遍的描边方式 , 高要求的团队可以定制各种风格<br>对于硬边几何体如Cube会出现面断开的问题<br>需要专门处理顶点的法线保证其连续</p>
@@ -627,7 +628,7 @@
                 
                   <a href="/archives/">
                 
-                    <span class="site-state-item-count">54</span>
+                    <span class="site-state-item-count">55</span>
                     <span class="site-state-item-name">日志</span>
                   </a>
                 </div>
@@ -660,7 +661,9 @@
                     
                       
                     
-                    <span class="site-state-item-count">10</span>
+                      
+                    
+                    <span class="site-state-item-count">11</span>
                     <span class="site-state-item-name">分类</span>
                   </a>
                 </div>

@@ -121,7 +121,7 @@
 <meta property="og:image" content="https://www.wonderm.cc/2019/05/26/CommandBufferAndPostProcess-Outline/Final_Bloom.png">
 <meta property="og:image" content="https://www.wonderm.cc/2019/05/26/CommandBufferAndPostProcess-Outline/Final_FillAll.png">
 <meta property="og:image" content="https://www.wonderm.cc/2019/05/26/CommandBufferAndPostProcess-Outline/Final_WithoutInside.png">
-<meta property="og:updated_time" content="2019-05-26T17:57:09.864Z">
+<meta property="og:updated_time" content="2019-06-02T11:28:18.097Z">
 <meta name="twitter:card" content="summary">
 <meta name="twitter:title" content="CommandBuffer与PostProcess实践-----Outline">
 <meta name="twitter:description" content="上篇说到 Unity 没有使用 OnRenderImage 方法，再来实现一个新的">
@@ -468,6 +468,7 @@
       
         <p>上篇说到 Unity 没有使用 <code>OnRenderImage</code> 方法，再来实现一个新的</p>
 <a id="more"></a>
+<p><code>CommandBuffer_Outline</code></p>
 <p><code>PostProcessV2</code> 没有使用相机的后期，先来分析可能的方法<br>既然我们可以通过 <code>CommandBuffer.DrawRenderer</code> 的方式来绘制用于描边 Mesh<br>那么我们在相机前方绘制一个 始终朝向相机的 <code>Quad</code> 不就可以了么<br>通过某种方式获取到当前帧渲染的结构就可以完全绕过 <code>OnRenderImage</code></p>
 <h3 id="效果预览"><a href="#效果预览" class="headerlink" title="效果预览"></a>效果预览</h3><p><img src="Final.png" alt="Preview_1"></p>
 <h3 id="实现动机"><a href="#实现动机" class="headerlink" title="实现动机"></a>实现动机</h3><p>既然已经可以在 ImageEffect 阶段实现了， 为什么还要做这些事情</p>
@@ -561,6 +562,10 @@
 
           <div class="post-nav-prev post-nav-item">
             
+              <a href="/2019/06/02/RainSurface-Shader-01/" rel="prev" title="表面积水效果 RainSurface">
+                表面积水效果 RainSurface <i class="fa fa-chevron-right"></i>
+              </a>
+            
           </div>
         </div>
       
@@ -630,7 +635,7 @@
                 
                   <a href="/archives/">
                 
-                    <span class="site-state-item-count">54</span>
+                    <span class="site-state-item-count">55</span>
                     <span class="site-state-item-name">日志</span>
                   </a>
                 </div>
@@ -663,7 +668,9 @@
                     
                       
                     
-                    <span class="site-state-item-count">10</span>
+                      
+                    
+                    <span class="site-state-item-count">11</span>
                     <span class="site-state-item-name">分类</span>
                   </a>
                 </div>
