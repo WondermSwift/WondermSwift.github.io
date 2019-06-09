@@ -355,6 +355,164 @@
   
   
   <div class="post-block">
+    <link itemprop="mainEntityOfPage" href="https://www.wonderm.cc/2015/03/27/unity-to-ios-msg/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="name" content="白昼">
+      <meta itemprop="description" content="wonderm-swift@hotmail.com">
+      <meta itemprop="image" content="/uploads/Avatar.jpg">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="白昼">
+    </span>
+
+    
+      <header class="post-header">
+
+        
+        
+          <h1 class="post-title" itemprop="name headline">
+                
+                
+                <a href="/2015/03/27/unity-to-ios-msg/" class="post-title-link" itemprop="url">Unity调用iOS推送消息</a>
+              
+            
+          </h1>
+        
+
+        <div class="post-meta">
+          <span class="post-time">
+
+            
+            
+            
+
+            
+              <span class="post-meta-item-icon">
+                <i class="fa fa-calendar-o"></i>
+              </span>
+              
+                <span class="post-meta-item-text">发表于</span>
+              
+
+              
+                
+              
+
+              <time title="创建时间：2015-03-27 22:34:27" itemprop="dateCreated datePublished" datetime="2015-03-27T22:34:27+08:00">2015-03-27</time>
+            
+
+            
+          </span>
+
+          
+            <span class="post-category">
+            
+              <span class="post-meta-divider">|</span>
+            
+              <span class="post-meta-item-icon">
+                <i class="fa fa-folder-o"></i>
+              </span>
+              
+                <span class="post-meta-item-text">分类于</span>
+              
+              
+                <span itemprop="about" itemscope itemtype="http://schema.org/Thing"><a href="/categories/Unity/" itemprop="url" rel="index"><span itemprop="name">Unity</span></a></span>
+
+                
+                
+              
+            </span>
+          
+
+          
+            
+            
+          
+
+          
+          
+
+          
+
+          
+
+          
+
+        </div>
+      </header>
+    
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+
+      
+      
+
+      
+        
+          
+            <p>在Unity中调用iOS消息推送,所有代码在Unity中完成<br>所有代码在Unity内完成</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br></pre></td><td class="code"><pre><span class="line">public Text label;</span><br><span class="line"></span><br><span class="line">void Start ()</span><br><span class="line">&#123;</span><br><span class="line">	CleanNotification ();</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line">//清空所有本地消息</span><br><span class="line">void CleanNotification ()</span><br><span class="line">&#123;</span><br><span class="line">	LocalNotification l = new LocalNotification ();</span><br><span class="line">	l.applicationIconBadgeNumber = -1;</span><br><span class="line">	NotificationServices.PresentLocalNotificationNow (l);</span><br><span class="line">	NotificationServices.CancelAllLocalNotifications ();</span><br><span class="line">	NotificationServices.ClearLocalNotifications ();</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line">//本地推送 你可以传入一个固定的推送时间</span><br><span class="line">public static void Push(string message,System.DateTime newDate,bool isRepeatDay)</span><br><span class="line">&#123;</span><br><span class="line">	//推送时间需要大于当前时间</span><br><span class="line">	if(newDate &gt; System.DateTime.Now)</span><br><span class="line">	&#123;</span><br><span class="line">		LocalNotification localNotification = new LocalNotification();</span><br><span class="line">		localNotification.fireDate =newDate;</span><br><span class="line">		localNotification.alertBody = message;</span><br><span class="line">		localNotification.applicationIconBadgeNumber = 1;</span><br><span class="line">		localNotification.hasAction = true;</span><br><span class="line">		if(isRepeatDay)</span><br><span class="line">		&#123;</span><br><span class="line">			//是否每天定期循环</span><br><span class="line">			localNotification.repeatCalendar = CalendarIdentifier.ChineseCalendar;</span><br><span class="line">			localNotification.repeatInterval = CalendarUnit.Day;</span><br><span class="line">		&#125;</span><br><span class="line">		localNotification.soundName = LocalNotification.defaultSoundName;</span><br><span class="line">		NotificationServices.ScheduleLocalNotification(localNotification);</span><br><span class="line">	&#125;</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line">public void ClickPush()&#123;</span><br><span class="line">	label.text = &quot;十秒钟后推送&quot; ;</span><br><span class="line">	Push(&quot;Wonderm :\t 十秒钟后推送&quot;,System.DateTime.Now.AddSeconds(10),false);</span><br><span class="line"></span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+          
+        
+      
+    </div>
+
+    
+
+    
+    
+    
+
+    
+
+    
+      
+    
+    
+
+    
+
+    <footer class="post-footer">
+      
+
+      
+
+      
+
+      
+      
+        <div class="post-eof"></div>
+      
+    </footer>
+  </div>
+  
+  
+  
+  </article>
+
+
+    
+      
+
+  
+
+  
+  
+  
+
+  
+
+  <article class="post post-type-normal" itemscope itemtype="http://schema.org/Article">
+  
+  
+  
+  <div class="post-block">
     <link itemprop="mainEntityOfPage" href="https://www.wonderm.cc/2015/03/24/Unity-to-Android-msg/">
 
     <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
@@ -1213,7 +1371,7 @@
                 
                   <a href="/archives/">
                 
-                    <span class="site-state-item-count">55</span>
+                    <span class="site-state-item-count">56</span>
                     <span class="site-state-item-name">日志</span>
                   </a>
                 </div>
@@ -1313,7 +1471,9 @@
                     
                       
                     
-                    <span class="site-state-item-count">26</span>
+                      
+                    
+                    <span class="site-state-item-count">27</span>
                     <span class="site-state-item-name">标签</span>
                   </a>
                 </div>
