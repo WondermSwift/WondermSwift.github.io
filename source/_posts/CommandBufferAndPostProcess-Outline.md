@@ -64,7 +64,7 @@ description:
 创建一个专门用于最终效果合成的 Buffer ，绘制到屏幕前
 
 Quad 创建
-```
+```csharp
   public class MeshUtils
     {
         #region FullScreen Mesh
@@ -115,7 +115,7 @@ Quad 创建
 ```
 
 绘制
-```
+```csharp
 	outlineBuffer = new CommandBuffer();
 	outlineBuffer.name = "Wonderm_Outline_Effect";
 
@@ -126,7 +126,7 @@ Quad 创建
 ![ScreenQuad](ScreenQuad.png)
  
  然后在修改顶点 Shader 让它面向屏幕
-```
+```c
 v2f vert (appdata v)
 {
 	v2f o;
@@ -159,7 +159,7 @@ v2f vert (appdata v)
 通过 `FrameDebug` 检视一番
 Unity 通过 `Hidden/PostProcessing/CopyStd` 将 CameraTarget 渲染到 RT 中
 使用的以下方法
-```
+```csharp
 	context.GetScreenSpaceTemporaryRT(cmd, tempRt, 0, sourceFormat, RenderTextureReadWrite.sRGB);
 	cmd.BuiltinBlit(cameraTarget, tempRt, RuntimeUtilities.copyStdMaterial, stopNaNPropagation ? 1 : 0);
 ```
@@ -169,7 +169,7 @@ Unity 通过 `Hidden/PostProcessing/CopyStd` 将 CameraTarget 渲染到 RT 中
 Google 一下得到答案 
 (How to get screen buffer RenderTargetIdentifier](https://forum.unity.com/threads/how-to-get-screen-buffer-rendertargetidentifier.320410/]
 
-```
+```csharp
 	int width = cam.pixelWidth;
 	int height = cam.pixelHeight;
 
@@ -214,7 +214,7 @@ Google 一下得到答案
 上篇写的后期也忘记清理了，设置渲染目标之后清除一下即可
 代码如下
 
-```
+```csharp
 	maskBuffer.GetTemporaryRT(ShaderIds.outlineMaskId, -1, -1, 24, FilterMode.Bilinear, RenderTextureFormat.ARGBFloat);
 	maskBuffer.SetRenderTarget(ShaderIds.outlineMaskId);
 	maskBuffer.ClearRenderTarget(true, true, Color.black);

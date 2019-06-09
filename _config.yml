@@ -106,5 +106,5 @@ deploy:
   #repo: git@git.dev.tencent.com:WondermSwift/WondermBlog.git
   repo: git@github.com:WondermSwift/WondermSwift.github.io.git
   branch: master
-  message: 添加日志：表面积水效果
+  message: 全息地图修改标题
 

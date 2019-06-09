@@ -72,7 +72,7 @@ description:
 本次我们允许指定颜色，每对象单独指定材质球且实时更新，通过CommandBuffer渲染到指定 RT 上
 
 
-```
+```csharp
 	outlineBuffer = new CommandBuffer();
 	outlineBuffer.name = "Outline";
 
@@ -91,7 +91,7 @@ description:
 #### 参数准备
 
 传入基本参数
-```
+```csharp
 	Matrix4x4 clipToView = GL.GetGPUProjectionMatrix(cam.projectionMatrix, true).inverse;
 	Shader.SetGlobalMatrix(clipToViewId, clipToView);
 
@@ -107,7 +107,7 @@ description:
 ```
 
 后期参数声明
-```
+```c
 	sampler2D _MainTex;
 	float4 _MainTex_TexelSize;
 
@@ -119,7 +119,7 @@ description:
 
 #### 后期处理
 
-```
+```csharp
 	 private void OnRenderImage(RenderTexture sourceTexture, RenderTexture destTexture)
 	{
 	    if (outlineBuffer == null)
@@ -166,7 +166,7 @@ description:
 并且将 Mask 图的格式改为 ARGBFloat 来支持 HDR  
 
 修改代码
-```
+```csharp
  	outlineBuffer.GetTemporaryRT(outlineMaskId, -1, -1, 24, FilterMode.Bilinear, RenderTextureFormat.ARGBFloat);
 
   	[ImageEffectOpaque]
