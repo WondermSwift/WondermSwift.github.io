@@ -1,0 +1,434 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8">
+<meta name="viewport" content="width=device-width">
+<meta name="theme-color" content="#222"><meta name="generator" content="Hexo 6.3.0">
+
+  <link rel="apple-touch-icon" sizes="180x180" href="/uploads/favicon.ico">
+  <link rel="icon" type="image/png" sizes="32x32" href="/uploads/favicon.ico">
+  <link rel="icon" type="image/png" sizes="16x16" href="/uploads/favicon.ico">
+  <link rel="mask-icon" href="/uploads/favicon.ico" color="#222">
+
+<link rel="stylesheet" href="/css/main.css">
+
+
+
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" integrity="sha256-HtsXJanqjKTc8vVQjO4YMhiqFoXkfBsjBWcX91T1jr8=" crossorigin="anonymous">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/animate.css/3.1.1/animate.min.css" integrity="sha256-PR7ttpcvz8qrF57fur/yAx1qXMFJeJFiA6pSzWi0OIE=" crossorigin="anonymous">
+
+<script class="next-config" data-name="main" type="application/json">{"hostname":"wondermswift.github.io","root":"/","images":"/images","scheme":"Mist","darkmode":false,"version":"8.18.0","exturl":false,"sidebar":{"position":"right","display":"post","padding":18,"offset":12},"copycode":{"enable":false,"style":null},"fold":{"enable":false,"height":500},"bookmark":{"enable":false,"color":"#222","save":"auto"},"mediumzoom":false,"lazyload":false,"pangu":false,"comments":{"style":"tabs","active":null,"storage":true,"lazyload":false,"nav":null},"stickytabs":false,"motion":{"enable":true,"async":false,"transition":{"menu_item":"fadeInDown","post_block":"fadeIn","post_header":"fadeInDown","post_body":"fadeInDown","coll_header":"fadeInLeft","sidebar":"fadeInUp"}},"prism":false,"i18n":{"placeholder":"搜索...","empty":"没有找到任何搜索结果：${query}","hits_time":"找到 ${hits} 个搜索结果（用时 ${time} 毫秒）","hits":"找到 ${hits} 个搜索结果"},"path":"/search.xml","localsearch":{"enable":true,"trigger":"auto","top_n_per_article":1,"unescape":false,"preload":false}}</script><script src="/js/config.js"></script>
+
+    <meta name="description" content="雨天地表积水和流动效果">
+<meta property="og:type" content="article">
+<meta property="og:title" content="表面积水效果 RainSurface">
+<meta property="og:url" content="https://wondermswift.github.io/2019/06/02/RainSurface-Shader-01/index.html">
+<meta property="og:site_name" content="白昼">
+<meta property="og:description" content="雨天地表积水和流动效果">
+<meta property="og:locale" content="zh_CN">
+<meta property="og:image" content="https://wondermswift.github.io/2019/06/02/RainSurface-Shader-01/Refrence_Preview.gif">
+<meta property="og:image" content="https://wondermswift.github.io/2019/06/02/RainSurface-Shader-01/RainSurface_02.gif">
+<meta property="og:image" content="https://wondermswift.github.io/2019/06/02/RainSurface-Shader-01/RainSurface_01.gif">
+<meta property="og:image" content="https://wondermswift.github.io/2019/06/02/RainSurface-Shader-01/Rainslope_01.gif">
+<meta property="og:image" content="https://wondermswift.github.io/2019/06/02/RainSurface-Shader-01/Texture_Packing.jpg">
+<meta property="og:image" content="https://wondermswift.github.io/2019/06/02/RainSurface-Shader-01/SmoothRGB.jpg">
+<meta property="og:image" content="https://wondermswift.github.io/2019/06/02/RainSurface-Shader-01/RainMaskSurf_01.jpg">
+<meta property="og:image" content="https://wondermswift.github.io/2019/06/02/RainSurface-Shader-01/RinpleAnim_01.gif">
+<meta property="og:image" content="https://wondermswift.github.io/2019/06/02/RainSurface-Shader-01/SlopeAnim_01.gif">
+<meta property="og:image" content="https://wondermswift.github.io/2019/06/02/RainSurface-Shader-01/AngleRotate.gif">
+<meta property="og:image" content="https://wondermswift.github.io/2019/06/02/RainSurface-Shader-01/PostProcess_Preview.jpg">
+<meta property="article:published_time" content="2019-06-02T10:43:41.000Z">
+<meta property="article:modified_time" content="2023-08-22T04:24:47.257Z">
+<meta property="article:author" content="白昼">
+<meta property="article:tag" content="Shader">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:image" content="https://wondermswift.github.io/2019/06/02/RainSurface-Shader-01/Refrence_Preview.gif">
+
+
+<link rel="canonical" href="https://wondermswift.github.io/2019/06/02/RainSurface-Shader-01/">
+
+
+
+<script class="next-config" data-name="page" type="application/json">{"sidebar":"","isHome":false,"isPost":true,"lang":"zh-CN","comments":true,"permalink":"https://wondermswift.github.io/2019/06/02/RainSurface-Shader-01/","path":"2019/06/02/RainSurface-Shader-01/","title":"表面积水效果 RainSurface"}</script>
+
+<script class="next-config" data-name="calendar" type="application/json">""</script>
+<title>表面积水效果 RainSurface | 白昼</title>
+  
+
+
+
+
+
+
+
+
+  <noscript>
+    <link rel="stylesheet" href="/css/noscript.css">
+  </noscript>
+</head>
+
+<body itemscope itemtype="http://schema.org/WebPage" class="use-motion">
+  <div class="headband"></div>
+
+  <main class="main">
+    <div class="column">
+      <header class="header" itemscope itemtype="http://schema.org/WPHeader"><div class="site-brand-container">
+  <div class="site-nav-toggle">
+    <div class="toggle" aria-label="切换导航栏" role="button">
+        <span class="toggle-line"></span>
+        <span class="toggle-line"></span>
+        <span class="toggle-line"></span>
+    </div>
+  </div>
+
+  <div class="site-meta">
+
+    <a href="/" class="brand" rel="start">
+      <i class="logo-line"></i>
+      <p class="site-title">白昼</p>
+      <i class="logo-line"></i>
+    </a>
+  </div>
+
+  <div class="site-nav-right">
+    <div class="toggle popup-trigger" aria-label="搜索" role="button">
+        <i class="fa fa-search fa-fw fa-lg"></i>
+    </div>
+  </div>
+</div>
+
+
+
+<nav class="site-nav">
+  <ul class="main-menu menu"><li class="menu-item menu-item-home"><a href="/" rel="section"><i class="home fa-fw"></i>首页</a></li><li class="menu-item menu-item-tags"><a href="/tags/" rel="section"><i class="tags fa-fw"></i>标签</a></li><li class="menu-item menu-item-archives"><a href="/archives/" rel="section"><i class="archive fa-fw"></i>归档</a></li><li class="menu-item menu-item-about"><a href="/about/" rel="section"><i class="user fa-fw"></i>关于</a></li>
+      <li class="menu-item menu-item-search">
+        <a role="button" class="popup-trigger"><i class="fa fa-search fa-fw"></i>搜索
+        </a>
+      </li>
+  </ul>
+</nav>
+
+
+
+  <div class="search-pop-overlay">
+    <div class="popup search-popup"><div class="search-header">
+  <span class="search-icon">
+    <i class="fa fa-search"></i>
+  </span>
+  <div class="search-input-container">
+    <input autocomplete="off" autocapitalize="off" maxlength="80"
+           placeholder="搜索..." spellcheck="false"
+           type="search" class="search-input">
+  </div>
+  <span class="popup-btn-close" role="button">
+    <i class="fa fa-times-circle"></i>
+  </span>
+</div>
+<div class="search-result-container no-result">
+  <div class="search-result-icon">
+    <i class="fa fa-spinner fa-pulse fa-5x"></i>
+  </div>
+</div>
+
+    </div>
+  </div>
+
+</header>
+        
+  
+  <aside class="sidebar">
+
+    <div class="sidebar-inner sidebar-nav-active sidebar-toc-active">
+      <ul class="sidebar-nav">
+        <li class="sidebar-nav-toc">
+          文章目录
+        </li>
+        <li class="sidebar-nav-overview">
+          站点概览
+        </li>
+      </ul>
+
+      <div class="sidebar-panel-container">
+        <!--noindex-->
+        <div class="post-toc-wrap sidebar-panel">
+            <div class="post-toc animated"><ol class="nav"><li class="nav-item nav-level-3"><a class="nav-link" href="#%E6%95%88%E6%9E%9C%E9%A2%84%E8%A7%88"><span class="nav-number">1.</span> <span class="nav-text">效果预览</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E6%95%88%E6%9E%9C%E5%88%86%E6%9E%90"><span class="nav-number">2.</span> <span class="nav-text">效果分析</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E7%B4%A0%E6%9D%90%E8%AF%B4%E6%98%8E"><span class="nav-number">3.</span> <span class="nav-text">素材说明</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E8%A1%A8%E9%9D%A2%E7%A7%AF%E6%B0%B4"><span class="nav-number">4.</span> <span class="nav-text">表面积水</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E6%B6%9F%E6%BC%AA%E5%8A%A8%E7%94%BB"><span class="nav-number">5.</span> <span class="nav-text">涟漪动画</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E6%B5%81%E5%8A%A8%E8%BD%A8%E8%BF%B9"><span class="nav-number">6.</span> <span class="nav-text">流动轨迹</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E8%B0%83%E5%8F%82%E6%B7%B7%E5%90%88"><span class="nav-number">7.</span> <span class="nav-text">调参混合</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E5%88%9D%E6%AD%A5%E6%94%B9%E8%BF%9B"><span class="nav-number">8.</span> <span class="nav-text">初步改进</span></a><ol class="nav-child"><li class="nav-item nav-level-4"><a class="nav-link" href="#%E4%B8%96%E7%95%8C%E7%A9%BA%E9%97%B4"><span class="nav-number">8.1.</span> <span class="nav-text">世界空间</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#%E6%B3%95%E7%BA%BF%E6%9C%9D%E5%90%91"><span class="nav-number">8.2.</span> <span class="nav-text">法线朝向</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#%E6%95%88%E6%9E%9C"><span class="nav-number">8.3.</span> <span class="nav-text">效果</span></a></li></ol></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E5%86%8D%E6%AC%A1%E6%94%B9%E8%BF%9B"><span class="nav-number">9.</span> <span class="nav-text">再次改进</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E5%8F%82%E8%80%83%E8%B5%84%E6%96%99"><span class="nav-number">10.</span> <span class="nav-text">参考资料</span></a></li></ol></div>
+        </div>
+        <!--/noindex-->
+
+        <div class="site-overview-wrap sidebar-panel">
+          <div class="site-author animated" itemprop="author" itemscope itemtype="http://schema.org/Person">
+    <img class="site-author-image" itemprop="image" alt="白昼"
+      src="/uploads/Avatar.jpg">
+  <p class="site-author-name" itemprop="name">白昼</p>
+  <div class="site-description" itemprop="description">wonderm-swift@hotmail.com</div>
+</div>
+<div class="site-state-wrap animated">
+  <nav class="site-state">
+      <div class="site-state-item site-state-posts">
+        <a href="/archives/">
+          <span class="site-state-item-count">56</span>
+          <span class="site-state-item-name">日志</span>
+        </a>
+      </div>
+      <div class="site-state-item site-state-categories">
+          <a href="/categories/">
+        <span class="site-state-item-count">11</span>
+        <span class="site-state-item-name">分类</span></a>
+      </div>
+      <div class="site-state-item site-state-tags">
+          <a href="/tags/">
+        <span class="site-state-item-count">27</span>
+        <span class="site-state-item-name">标签</span></a>
+      </div>
+  </nav>
+</div>
+
+        </div>
+      </div>
+    </div>
+
+    
+    <div class="sidebar-inner sidebar-blogroll">
+      <div class="links-of-blogroll animated">
+        <div class="links-of-blogroll-title"><i class="fa  fa-fw fa-link fa-fw"></i>
+          链接
+        </div>
+        <ul class="links-of-blogroll-list">
+            <li class="links-of-blogroll-item">
+              <a href="http://www.gamemaker.cn/" title="http:&#x2F;&#x2F;www.gamemaker.cn&#x2F;" rel="noopener" target="_blank">GameMaker</a>
+            </li>
+            <li class="links-of-blogroll-item">
+              <a href="http://www.magecorn.com/" title="http:&#x2F;&#x2F;www.magecorn.com&#x2F;" rel="noopener" target="_blank">傲娇玉米站</a>
+            </li>
+            <li class="links-of-blogroll-item">
+              <a href="http://soragame.com/" title="http:&#x2F;&#x2F;soragame.com&#x2F;" rel="noopener" target="_blank">波导Lucario</a>
+            </li>
+            <li class="links-of-blogroll-item">
+              <a href="http://deciia.wang/" title="http:&#x2F;&#x2F;deciia.wang&#x2F;" rel="noopener" target="_blank">未来印象</a>
+            </li>
+            <li class="links-of-blogroll-item">
+              <a href="http://www.tuoyitian.com/" title="http:&#x2F;&#x2F;www.tuoyitian.com&#x2F;" rel="noopener" target="_blank">鸵翼天游戏</a>
+            </li>
+        </ul>
+      </div>
+    </div>
+  </aside>
+
+
+    </div>
+
+    <div class="main-inner post posts-expand">
+
+
+  
+
+
+<div class="post-block">
+  
+  
+
+  <article itemscope itemtype="http://schema.org/Article" class="post-content" lang="zh-CN">
+    <link itemprop="mainEntityOfPage" href="https://wondermswift.github.io/2019/06/02/RainSurface-Shader-01/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="image" content="/uploads/Avatar.jpg">
+      <meta itemprop="name" content="白昼">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="白昼">
+      <meta itemprop="description" content="wonderm-swift@hotmail.com">
+    </span>
+
+    <span hidden itemprop="post" itemscope itemtype="http://schema.org/CreativeWork">
+      <meta itemprop="name" content="表面积水效果 RainSurface | 白昼">
+      <meta itemprop="description" content="">
+    </span>
+      <header class="post-header">
+        <h1 class="post-title" itemprop="name headline">
+          表面积水效果 RainSurface
+        </h1>
+
+        <div class="post-meta-container">
+          <div class="post-meta">
+    <span class="post-meta-item">
+      <span class="post-meta-item-icon">
+        <i class="far fa-calendar"></i>
+      </span>
+      <span class="post-meta-item-text">发表于</span>
+
+      <time title="创建时间：2019-06-02 18:43:41" itemprop="dateCreated datePublished" datetime="2019-06-02T18:43:41+08:00">2019-06-02</time>
+    </span>
+    <span class="post-meta-item">
+      <span class="post-meta-item-icon">
+        <i class="far fa-calendar-check"></i>
+      </span>
+      <span class="post-meta-item-text">更新于</span>
+      <time title="修改时间：2023-08-22 12:24:47" itemprop="dateModified" datetime="2023-08-22T12:24:47+08:00">2023-08-22</time>
+    </span>
+    <span class="post-meta-item">
+      <span class="post-meta-item-icon">
+        <i class="far fa-folder"></i>
+      </span>
+      <span class="post-meta-item-text">分类于</span>
+        <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+          <a href="/categories/Shader/" itemprop="url" rel="index"><span itemprop="name">Shader</span></a>
+        </span>
+          ，
+        <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+          <a href="/categories/Shader/Unity/" itemprop="url" rel="index"><span itemprop="name">Unity</span></a>
+        </span>
+    </span>
+
+  
+</div>
+
+        </div>
+      </header>
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody"><p>雨天地表积水和流动效果</p>
+<span id="more"></span>
+
+<p><code>RainSurface-Shader</code></p>
+<p>这里只是初步实现，用于验证想法是否可行<br>完整的将在未来整合到屏幕后期中来实现</p>
+<h3 id="效果预览"><a href="#效果预览" class="headerlink" title="效果预览"></a>效果预览</h3><p>参考目标<br><img src="/2019/06/02/RainSurface-Shader-01/Refrence_Preview.gif" alt="Preview_1"></p>
+<p>实现效果<br><img src="/2019/06/02/RainSurface-Shader-01/RainSurface_02.gif" alt="RainSurface_02"><br><img src="/2019/06/02/RainSurface-Shader-01/RainSurface_01.gif" alt="RainSurface_01"><br><img src="/2019/06/02/RainSurface-Shader-01/Rainslope_01.gif" alt="Rainslope_01"></p>
+<h3 id="效果分析"><a href="#效果分析" class="headerlink" title="效果分析"></a>效果分析</h3><p>效果可基本分成三大块</p>
+<ol>
+<li>表面积水</li>
+<li>涟漪动画</li>
+<li>流动轨迹</li>
+</ol>
+<p>每个都不难，基本都属于以前用过的知识</p>
+<p>难点雨滴涟漪和流动的实现步骤和素材在 <a target="_blank" rel="noopener" href="https://deepspacebanana.github.io/deepspacebanana.github.io/blog/shader/art/unreal%20engine/Rainy-Surface-Shader-Part-1">Rainy Surface Shader</a> 这篇文章里都有讲解<br>这里在Unity中实现有细节上会不一致 最终效果是相似的</p>
+<h3 id="素材说明"><a href="#素材说明" class="headerlink" title="素材说明"></a>素材说明</h3><p>新建一个 SurfShader 在这个的基础上一步步扩展</p>
+<p>主要贴图一张，雨滴和流动法线两张<br><img src="/2019/06/02/RainSurface-Shader-01/Texture_Packing.jpg" alt="Texture_Packing"></p>
+<p>R-雨滴涟漪 G-轨迹遮罩 B-流动遮罩</p>
+<p>R 通道单独运算产生动画<br>GB 结合做出流动效果</p>
+<h3 id="表面积水"><a href="#表面积水" class="headerlink" title="表面积水"></a>表面积水</h3><p>积水的效果是通过改变光滑度和法线来实现的<br>根据表面湿润程度插值即可，不同光滑度对比如下</p>
+<p><img src="/2019/06/02/RainSurface-Shader-01/SmoothRGB.jpg" alt="SmoothRGB"></p>
+<p>可以看出单独的光滑不能带来湿润的效果<br>要辅助以颜色加深来看清反射的内容</p>
+<p>然后是遮罩，类似消融的效果来模拟积水过程<br>因为积水边缘的反光一般很明显，对遮罩的效果简单power一下</p>
+<p>代码如下</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br></pre></td><td class="code"><pre><span class="line">fixed rainMask = tex2D(_RainMaskTex, IN.uv_MainTex).r;</span><br><span class="line">rainMask = lerp(-0.6, 3, _RainFade) - rainMask * 2;</span><br><span class="line">rainMask = saturate(rainMask);</span><br><span class="line">rainMask = pow(rainMask, 8);</span><br><span class="line"></span><br><span class="line">o.Albedo = lerp(c.rgb, c.rgb* _RainColor,  rainMask);</span><br><span class="line">o.Normal = lerp(normal, float3(0,0,1), rainMask);</span><br><span class="line">o.Smoothness = lerp(_Glossiness,1,  rainMask);</span><br></pre></td></tr></table></figure>
+
+<p>效果已经不错了<br><img src="/2019/06/02/RainSurface-Shader-01/RainMaskSurf_01.jpg" alt="RainMaskSurf_01"></p>
+<h3 id="涟漪动画"><a href="#涟漪动画" class="headerlink" title="涟漪动画"></a>涟漪动画</h3><p>雨滴涟漪的实现很多，参照<a target="_blank" rel="noopener" href="https://deepspacebanana.github.io/deepspacebanana.github.io/blog/shader/art/unreal%20engine/Rainy-Surface-Shader-Part-1">Rainy Surface Shader</a>这篇文章中介绍的一步步迭代</p>
+<p>采样贴图的R通道，与时间进行运算得到淡入动画<br>UV偏移再做一次叠加输出，得到没有明显重复感的动画</p>
+<p>代码如下</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br></pre></td><td class="code"><pre><span class="line">fixed Rinple(fixed rinple1, float time) &#123;</span><br><span class="line">	fixed speed = _Speed;</span><br><span class="line">	fixed rinpleSpeed1 = 1 - frac(time * speed);</span><br><span class="line">	fixed3 r1 = rinple1 - rinpleSpeed1;</span><br><span class="line">	r1 = abs(r1 - 0.05) / _RippleWidth;</span><br><span class="line">	r1 = smoothstep(1, 0, r1) * pow(rinpleSpeed1, 3);</span><br><span class="line">	return  r1;</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line">	fixed c1 = tex2D(_MainTex, IN.uv_MainTex).r  ;</span><br><span class="line">	fixed c2 = tex2D (_MainTex, IN.uv_MainTex+0.5).r  ;</span><br><span class="line">	c1 = Rinple(c1, time) ;</span><br><span class="line">	c2 = Rinple(c2, time + 0.5) ;</span><br><span class="line">	o.Albedo = saturate( c1 + c2);</span><br></pre></td></tr></table></figure>
+
+
+<p>效果如下<br><img src="/2019/06/02/RainSurface-Shader-01/RinpleAnim_01.gif" alt="RinpleAnim_01"></p>
+<p>相同的操作对法线也来一遍</p>
+<h3 id="流动轨迹"><a href="#流动轨迹" class="headerlink" title="流动轨迹"></a>流动轨迹</h3><p>采样贴图的 G 通道得到轨迹，采样 B 通道并滚动 UV<br>两者相乘即可得到轨迹动画效果 </p>
+<p>效果如下<br><img src="/2019/06/02/RainSurface-Shader-01/SlopeAnim_01.gif" alt="SlopeAnim_01"></p>
+<p>相同的操作对法线也来一遍</p>
+<h3 id="调参混合"><a href="#调参混合" class="headerlink" title="调参混合"></a>调参混合</h3><p>整理各个功能的参数，并把他们纳入的湿度和 Mask 的控制下<br>将湿度分三层，隔离参数区间，区分光滑度，暗度和动画强度<br>区分出来潮湿，积水，流动三级效果</p>
+<p>一波操作之后我们实现了原博客效果的80%，还有20% 来自与旋转<br>我们发现原博客的面片是可以转动移动的，准备开始改进</p>
+<h3 id="初步改进"><a href="#初步改进" class="headerlink" title="初步改进"></a>初步改进</h3><h4 id="世界空间"><a href="#世界空间" class="headerlink" title="世界空间"></a>世界空间</h4><p>积水的 Mask 和 雨滴涟漪 应该是世界空间的<br>这样多个地块拼接或者对象移动的时候观感才是正确的</p>
+<h4 id="法线朝向"><a href="#法线朝向" class="headerlink" title="法线朝向"></a>法线朝向</h4><p>涟漪应该只出现在和雨滴运动相对的方向<br>我们加入落雨方向与世界空间法线运算得到方向遮罩</p>
+<p>滑落的水珠应该只出现在朝上倾斜的面上<br>同样世界法线和朝上的向量运算得到方向遮罩</p>
+<h4 id="效果"><a href="#效果" class="headerlink" title="效果"></a>效果</h4><p><img src="/2019/06/02/RainSurface-Shader-01/AngleRotate.gif" alt="AngleRotate"></p>
+<h3 id="再次改进"><a href="#再次改进" class="headerlink" title="再次改进"></a>再次改进</h3><p>目前的效果已经达到了我们的预期，但并不能直接放到项目里使用<br>改动成本高，计算量也大，调节不方便<br>空间遮罩也不好解决，房檐下不落雨之类实现不方便</p>
+<p>好的解决应该把整个效果都放到后期处理中<br>在光照之前通过 CommondBuffer 拿到 Gbuffer<br>修改对应的参数，插入涟漪和水珠</p>
+<p>目前已经初步扫清了障碍<br>如下图，所有的效果都在后期中进行<br><img src="/2019/06/02/RainSurface-Shader-01/PostProcess_Preview.jpg" alt="PostProcess_Preview"></p>
+<p>待实现完成之后进行说明</p>
+<h3 id="参考资料"><a href="#参考资料" class="headerlink" title="参考资料"></a>参考资料</h3><p><a target="_blank" rel="noopener" href="https://deepspacebanana.github.io/deepspacebanana.github.io/blog/shader/art/unreal%20engine/Rainy-Surface-Shader-Part-1">Rainy Surface Shader</a></p>
+<p><a target="_blank" rel="noopener" href="https://zhuanlan.zhihu.com/p/54688674">湿滑的马路</a></p>
+
+    </div>
+
+    
+    
+    
+
+    <footer class="post-footer">
+          <div class="post-tags">
+              <a href="/tags/Shader/" rel="tag"># Shader</a>
+          </div>
+
+        
+
+          <div class="post-nav">
+            <div class="post-nav-item">
+                <a href="/2019/05/26/CommandBufferAndPostProcess-Outline/" rel="prev" title="CommandBuffer与PostProcess实践-----Outline">
+                  <i class="fa fa-angle-left"></i> CommandBuffer与PostProcess实践-----Outline
+                </a>
+            </div>
+            <div class="post-nav-item">
+                <a href="/2019/06/09/HUD-Compass-3D/" rel="next" title="全息地图">
+                  全息地图 <i class="fa fa-angle-right"></i>
+                </a>
+            </div>
+          </div>
+    </footer>
+  </article>
+</div>
+
+
+
+
+
+
+</div>
+  </main>
+
+  <footer class="footer">
+    <div class="footer-inner">
+
+  <div class="copyright">
+    &copy; 2014 – 
+    <span itemprop="copyrightYear">2023</span>
+    <span class="with-love">
+      <i class="user"></i>
+    </span>
+    <span class="author" itemprop="copyrightHolder"><a href="mailto:wonderm-swift@hotmail.com?subject=发给白昼的邮件" target="_self">@白昼</a></span>
+  </div>
+  <div class="powered-by">由 <a href="https://hexo.io/" rel="noopener" target="_blank">Hexo</a> & <a href="https://theme-next.js.org/mist/" rel="noopener" target="_blank">NexT.Mist</a> 强力驱动
+  </div>
+
+    </div>
+  </footer>
+
+  
+  <div class="toggle sidebar-toggle" role="button">
+    <span class="toggle-line"></span>
+    <span class="toggle-line"></span>
+    <span class="toggle-line"></span>
+  </div>
+  <div class="sidebar-dimmer"></div>
+  <div class="back-to-top" role="button" aria-label="返回顶部">
+    <i class="fa fa-arrow-up fa-lg"></i>
+    <span>0%</span>
+  </div>
+
+<noscript>
+  <div class="noscript-warning">Theme NexT works best with JavaScript enabled</div>
+</noscript>
+
+
+  
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/animejs/3.2.1/anime.min.js" integrity="sha256-XL2inqUJaslATFnHdJOi9GfQ60on8Wx1C2H8DYiN1xY=" crossorigin="anonymous"></script>
+<script src="/js/comments.js"></script><script src="/js/utils.js"></script><script src="/js/motion.js"></script><script src="/js/schemes/muse.js"></script><script src="/js/next-boot.js"></script>
+
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/hexo-generator-searchdb/1.4.1/search.js" integrity="sha256-1kfA5uHPf65M5cphT2dvymhkuyHPQp5A53EGZOnOLmc=" crossorigin="anonymous"></script>
+<script src="/js/third-party/search/local-search.js"></script>
+
+
+
+
+
+
+
+  
+
+
+
+
+
+</body>
+</html>
