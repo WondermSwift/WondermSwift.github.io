@@ -22,7 +22,7 @@ description:
 
 图片来自微博上购买的指环王主题明信片
 一套八张 这是第一张, 作者 `Veronica Hsu` 
-最后有曲阜图片
+最后有全部图片
 
 ![输入](Pre.jpg)
 ![输出](Final.jpg)
